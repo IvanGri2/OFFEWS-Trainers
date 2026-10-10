@@ -125,6 +125,22 @@ EMBLEM = ('<svg class="emblem" viewBox="0 0 48 48" aria-hidden="true">'
 SITE_URL = "https://ivangri2.github.io/OFFEWS-Trainers/"
 REPO = "IvanGri2/OFFEWS-Trainers"
 
+# Comments: giscus stores each trainer's thread as a GitHub Discussion in REPO. The section is
+# left out until category_id is filled in (Discussions on, giscus app installed).
+GISCUS = {"repo_id": "R_kgDOVDfyEw", "category": "Announcements", "category_id": ""}
+
+
+def comments(tr):
+    if not GISCUS["category_id"]:
+        return ""
+    return f"""
+        <section class="comments reveal" aria-labelledby="{tr["id"]}-comments">
+          <h3 id="{tr["id"]}-comments">{t("Комментарии", "Comments")}</h3>
+          <p class="demo-hint">{t("Пиши, что работает, что нет и какую функцию добавить. Для комментария нужен аккаунт GitHub.", "Tell what works, what doesn't and which function to add. Commenting needs a GitHub account.")}</p>
+          <div class="giscus-slot" data-term="{e(tr["id"])}" data-repo="{REPO}" data-repo-id="{GISCUS["repo_id"]}"
+               data-category="{e(GISCUS["category"])}" data-category-id="{GISCUS["category_id"]}"></div>
+        </section>"""
+
 
 def release_url(path):
     name = os.path.basename(path)
@@ -203,6 +219,7 @@ def detail(tr):
           <p class="demo-hint">{t("Горячие клавиши указаны по умолчанию, в трейнере их можно переназначить.", "Hotkeys are defaults and can be rebound in the trainer.")}</p>
           {"".join(blocks)}
         </details>
+        {comments(tr)}
       </div>
     </section>"""
 

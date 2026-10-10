@@ -64,6 +64,34 @@
       .catch(function () {});
   }
 
+  // ---- comments: giscus (GitHub Discussions), loaded when the section comes near ------------
+  var commentSlots = document.querySelectorAll(".giscus-slot");
+  function loadComments(slot) {
+    if (slot.getAttribute("data-loaded")) return;
+    slot.setAttribute("data-loaded", "1");
+    var s = document.createElement("script");
+    s.src = "https://giscus.app/client.js";
+    s.async = true;
+    s.crossOrigin = "anonymous";
+    var attrs = {
+      "data-repo": slot.getAttribute("data-repo"), "data-repo-id": slot.getAttribute("data-repo-id"),
+      "data-category": slot.getAttribute("data-category"), "data-category-id": slot.getAttribute("data-category-id"),
+      "data-mapping": "specific", "data-term": slot.getAttribute("data-term"), "data-strict": "1",
+      "data-reactions-enabled": "1", "data-emit-metadata": "0", "data-input-position": "top",
+      "data-theme": "transparent_dark", "data-lang": root.getAttribute("data-lang") === "en" ? "en" : "ru", "data-loading": "lazy"
+    };
+    for (var k in attrs) s.setAttribute(k, attrs[k]);
+    slot.appendChild(s);
+  }
+  if (commentSlots.length) {
+    if ("IntersectionObserver" in window) {
+      var co = new IntersectionObserver(function (en) {
+        for (var i = 0; i < en.length; i++) if (en[i].isIntersecting) { loadComments(en[i].target); co.unobserve(en[i].target); }
+      }, { rootMargin: "600px 0px" });
+      for (var cs = 0; cs < commentSlots.length; cs++) co.observe(commentSlots[cs]);
+    } else for (var cs2 = 0; cs2 < commentSlots.length; cs2++) loadComments(commentSlots[cs2]);
+  }
+
   if (reduce) return;
 
   // ---- hero stage follows the pointer -------------------------------------------------------

@@ -359,3 +359,9 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
 .funcs[open] > summary::after { transform: rotate(45deg); }
 .funcs > summary:hover { border-color: var(--glow, var(--accent)); }
 .funcs .groups { margin-top: 4px; }
+
+/* ---- comments (giscus) --------------------------------------------------------------------- */
+.comments { display: grid; gap: 10px; margin-top: 18px; padding-top: 28px; border-top: 1px solid var(--line); }
+.comments h3 { font: 700 clamp(22px, 3vw, 30px)/1.1 var(--font-display); }
+.giscus-slot { min-height: 120px; }
+.giscus-slot .giscus, .giscus-slot iframe { width: 100%; }
