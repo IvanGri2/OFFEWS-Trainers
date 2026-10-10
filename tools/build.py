@@ -119,7 +119,7 @@ EMBLEM = ('<svg class="emblem" viewBox="0 0 48 48" aria-hidden="true">'
           '<path class="ring" pathLength="1" d="M17.4 18.3a9.6 9.6 0 1 0 13.2 0" /><path class="ring bar" pathLength="1" d="M24 13.6v10.6" /></svg>')
 
 # Donation services: (name, link). An empty link shows the button as "soon".
-DONATE = [("Boosty", ""), ("DonationAlerts", ""), ("ЮMoney", "")]
+DONATE = [("DonationAlerts", "https://www.donationalerts.com/r/offews"), ("Boosty", ""), ("ЮMoney", "")]
 
 
 def chips(tr):
