@@ -1,0 +1,41 @@
+# Copies the release download counts into downloads.json on the site, so the counters on the page
+# work even when the visitor's IP has used up GitHub's anonymous API limit (60 requests an hour,
+# shared by everyone behind the same mobile or provider address). Commits only when a count changed.
+name: Download counts
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_run:
+    workflows: ["Release trainers"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency: download-counts
+
+jobs:
+  counts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write downloads.json
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --paginate \
+            | jq -s 'add | map({assets: [.assets[] | {name, download_count}]})' > downloads.new.json
+          if cmp -s downloads.new.json downloads.json; then
+            echo "counts unchanged"; rm downloads.new.json; exit 0
+          fi
+          mv downloads.new.json downloads.json
+          git config user.name "OFFEWS"
+          git config user.email "offews@gmail.com"
+          git add downloads.json
+          git commit -m "Update download counts"
+          git push
+          # a push made with the workflow token may not start a Pages build on its own
+          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/builds" || true

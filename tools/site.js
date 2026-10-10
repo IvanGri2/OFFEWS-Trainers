@@ -50,18 +50,32 @@
       slots[i].hidden = false;
     }
   }
+  // GitHub's API allows 60 anonymous requests an hour per IP, and visitors behind one mobile or
+  // provider address share that. The site's own downloads.json (refreshed by a workflow every half
+  // hour) is shown first, then replaced by live numbers when the API answers.
+  function slim(data) {
+    return data.map(function (r) { return { assets: (r.assets || []).map(function (a) { return { name: a.name, download_count: a.download_count }; }) }; });
+  }
   if (slots.length && window.fetch) {
     var cached = null;
     try { cached = JSON.parse(sessionStorage.getItem("offews-dl")); } catch (e) {}
     if (cached && Date.now() - cached.at < 120000) showCounts(cached.data);
-    else fetch("https://api.github.com/repos/IvanGri2/OFFEWS-Trainers/releases?per_page=100")
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (data) {
-        var slim = data.map(function (r) { return { assets: (r.assets || []).map(function (a) { return { name: a.name, download_count: a.download_count }; }) }; });
-        try { sessionStorage.setItem("offews-dl", JSON.stringify({ at: Date.now(), data: slim })); } catch (e) {}
-        showCounts(slim);
-      })
-      .catch(function () {});
+    else {
+      var live = false;
+      fetch("/downloads.json", { cache: "no-cache" })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (data) { if (!live) showCounts(data); })
+        .catch(function () {});
+      fetch("https://api.github.com/repos/IvanGri2/OFFEWS-Trainers/releases?per_page=100")
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (data) {
+          var s = slim(data);
+          live = true;
+          try { sessionStorage.setItem("offews-dl", JSON.stringify({ at: Date.now(), data: s })); } catch (e) {}
+          showCounts(s);
+        })
+        .catch(function () {});
+    }
   }
 
   // ---- comments: giscus (GitHub Discussions), loaded when the section comes near ------------
