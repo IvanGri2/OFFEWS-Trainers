@@ -33,6 +33,9 @@ TRAINERS = [
         "about_en": "Invincible hero and squad, unlimited ammo and grenades, one-hit kills, frozen enemies, a damage multiplier and game speed.",
         "download": "",
         "size_kb": 336,
+        "glow": "#ff5a1f",
+        "highlights": [("Бессмертие отряда", "Immortal squad"), ("Убийство с одного выстрела", "One-hit kills"),
+                       ("Заморозка врагов", "Freeze enemies"), ("Множитель урона", "Damage multiplier")],
     },
     {
         "id": "hellraiser-revival",
@@ -51,6 +54,9 @@ TRAINERS = [
         "about_en": "God mode and flight, unlimited suffering and ammo, coins and items, kill all enemies, full map reveal, ghost mode, teleport and save anywhere.",
         "download": "",
         "size_kb": 333,
+        "glow": "#5f8cff",
+        "highlights": [("Режим призрака", "Ghost mode"), ("Убить всех врагов", "Kill all enemies"),
+                       ("Открыть всю карту", "Reveal map"), ("Сохранение в любом месте", "Save anywhere")],
     },
 ]
 
@@ -109,31 +115,32 @@ POWER_SMALL = ('<svg class="pw" viewBox="0 0 24 24" aria-hidden="true"><path d="
                '<path d="M12 3v8" /></svg>')
 
 EMBLEM = ('<svg class="emblem" viewBox="0 0 48 48" aria-hidden="true">'
-          '<polygon class="hex" points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5" />'
-          '<path class="ring" d="M17.4 18.3a9.6 9.6 0 1 0 13.2 0" /><path class="ring" d="M24 13.6v10.6" /></svg>')
+          '<polygon class="hex" pathLength="1" points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5" />'
+          '<path class="ring" pathLength="1" d="M17.4 18.3a9.6 9.6 0 1 0 13.2 0" /><path class="ring bar" pathLength="1" d="M24 13.6v10.6" /></svg>')
+
+# Donation services: (name, link). An empty link shows the button as "soon".
+DONATE = [("Boosty", ""), ("DonationAlerts", ""), ("ЮMoney", "")]
 
 
-def card(tr):
+def chips(tr):
+    return "".join(f'<li>{t(ru, en)}</li>' for ru, en in tr["highlights"])
+
+
+def card(tr, i):
     n = count(tr)
-    return f'''
-      <article class="card">
-        <a class="card-poster" href="#{tr["id"]}">
-          <img src="{tr["poster"]}" alt="{e(tr["title"])}" width="480" height="720" loading="lazy">
-          <span class="card-count">+{n}</span>
+    return f"""
+      <article class="card reveal" style="--glow:{tr["glow"]}" data-tilt>
+        <a class="card-link" href="#{tr["id"]}" aria-label="{e(tr["title"])}">
+          <img class="card-art" src="{tr["poster"]}" alt="" width="480" height="720" loading="lazy">
+          <span class="card-glare" aria-hidden="true"></span>
+          <span class="card-count"><b>+{n}</b>{t(plural_ru(n, "функция", "функции", "функций"), "functions")}</span>
+          <span class="card-info">
+            <span class="card-ver mono">v{tr["version"]} · {t(tr["game_build_ru"], tr["game_build_en"])}</span>
+            <span class="card-title">{e(tr["title"])}</span>
+            <ul class="chips">{chips(tr)}</ul>
+          </span>
         </a>
-        <div class="card-body">
-          <h3><a href="#{tr["id"]}">{e(tr["title"])}</a></h3>
-          <p class="card-about">{t(tr["about_ru"], tr["about_en"])}</p>
-          <dl class="facts">
-            <div><dt>{t("Трейнер", "Trainer")}</dt><dd class="mono">v{tr["version"]}</dd></div>
-            <div><dt>{t("Версия игры", "Game version")}</dt><dd>{t(tr["game_build_ru"], tr["game_build_en"])}</dd></div>
-          </dl>
-          <div class="card-actions">
-            {download_button(tr)}
-            <a class="btn btn-ghost" href="#{tr["id"]}">{t("Все функции", "All functions")}</a>
-          </div>
-        </div>
-      </article>'''
+      </article>"""
 
 
 def detail(tr):
@@ -146,61 +153,86 @@ def detail(tr):
         inner = []
         for g in gs:
             rows = "".join(
-                f'<li>{keycap(i["key"])}<span class="fn">{t(i["ru"], i["en"])}</span></li>' for i in g["items"])
-            wide = " wide" if any(i["key"].count("+") >= 2 for i in g["items"]) else ""
-            inner.append(f'<section class="group{wide}"><h4>{t(g["ru"], g["en"])}</h4><ul>{rows}</ul></section>')
+                f'<li><button type="button" class="sw" aria-pressed="false" aria-label="{e(i["ru"])}"><span></span></button>'
+                f'<span class="fn">{t(i["ru"], i["en"])}</span>{keycap(i["key"])}</li>' for i in g["items"])
+            inner.append(f'<section class="group reveal"><h4>{t(g["ru"], g["en"])}</h4><ul>{rows}</ul></section>')
         head = f'<h3 class="page-tab">{t(PAGE_RU[page], PAGE_EN[page])}</h3>' if len(pages) > 1 else ""
         blocks.append(head + '<div class="groups">' + "".join(inner) + "</div>")
     shots = "".join(
-        f'<figure><img src="{s}" alt="{e(ru)}" loading="lazy"><figcaption>{t(ru, en)}</figcaption></figure>'
+        f'<figure class="reveal"><img src="{s}" alt="{e(ru)}" loading="lazy"><figcaption>{t(ru, en)}</figcaption></figure>'
         for s, ru, en in tr["shots"])
     word_ru = plural_ru(n, "функция", "функции", "функций")
-    return f'''
-    <section class="trainer" id="{tr["id"]}" aria-labelledby="{tr["id"]}-title">
-      <div class="wrap trainer-grid">
-        <aside class="trainer-side">
-          <img class="side-poster" src="{tr["poster"]}" alt="" width="480" height="720" loading="lazy">
-          <dl class="side-facts">
-            <div><dt>{t("Проверено на версии игры", "Tested on game version")}</dt><dd class="brass">{t(tr["game_build_ru"], tr["game_build_en"])}</dd></div>
-            <div><dt>{t("Версия трейнера", "Trainer version")}</dt><dd class="mono">v{tr["version"]}</dd></div>
-            <div><dt>{t("Обновлён", "Updated")}</dt><dd>{t(date_ru(tr["updated"]), date_en(tr["updated"]))}</dd></div>
-            <div><dt>{t("Режим", "Mode")}</dt><dd>{t(tr["mode_ru"], tr["mode_en"])}</dd></div>
-            <div><dt>{t("Нужно", "Requires")}</dt><dd>Windows 10/11, .NET Framework 4.8</dd></div>
-          </dl>
-        </aside>
-        <div class="trainer-main">
-          <p class="eyebrow">{t(f"Трейнер · {n} {word_ru}", f"Trainer · {n} functions")}</p>
-          <h2 id="{tr["id"]}-title">{e(tr["title"])}</h2>
-          <p class="lead">{t(tr["about_ru"], tr["about_en"])}</p>
-          <div class="trainer-actions">{download_button(tr, big=True)}</div>
-          <div class="shots shots-{len(tr["shots"])}">{shots}</div>
-          {"".join(blocks)}
-          <p class="note">{t("Горячие клавиши указаны по умолчанию, в трейнере их можно переназначить.", "Default hotkeys shown; you can rebind them in the trainer.")}</p>
+    return f"""
+    <section class="trainer" id="{tr["id"]}" style="--glow:{tr["glow"]}" aria-labelledby="{tr["id"]}-title">
+      <div class="trainer-banner" style="--art:url('{tr["poster"]}')">
+        <div class="wrap banner-grid">
+          <img class="banner-poster reveal" src="{tr["poster"]}" alt="" width="480" height="720" loading="lazy">
+          <div class="banner-copy">
+            <p class="eyebrow">{t(f"Трейнер · {n} {word_ru}", f"Trainer · {n} functions")}</p>
+            <h2 id="{tr["id"]}-title">{e(tr["title"])}</h2>
+            <p class="lead">{t(tr["about_ru"], tr["about_en"])}</p>
+            <dl class="facts">
+              <div><dt>{t("Проверено на версии", "Tested on")}</dt><dd>{t(tr["game_build_ru"], tr["game_build_en"])}</dd></div>
+              <div><dt>{t("Трейнер", "Trainer")}</dt><dd class="mono">v{tr["version"]}</dd></div>
+              <div><dt>{t("Обновлён", "Updated")}</dt><dd>{t(date_ru(tr["updated"]), date_en(tr["updated"]))}</dd></div>
+              <div><dt>{t("Режим", "Mode")}</dt><dd>{t(tr["mode_ru"], tr["mode_en"])}</dd></div>
+            </dl>
+            <div class="trainer-actions">{download_button(tr, big=True)}<span class="req">Windows 10/11 · .NET Framework 4.8</span></div>
+          </div>
         </div>
       </div>
-    </section>'''
+      <div class="wrap trainer-body">
+        <div class="shots shots-{len(tr["shots"])}">{shots}</div>
+        <p class="demo-hint">{t("Переключатели ниже можно понажимать: так функции включаются в трейнере. Горячие клавиши указаны по умолчанию и переназначаются.", "Try the switches below: this is how functions turn on in the trainer. Hotkeys are defaults and can be rebound.")}</p>
+        {"".join(blocks)}
+      </div>
+    </section>"""
+
+
+def donate_buttons():
+    out = []
+    for name, link in DONATE:
+        if link:
+            out.append(f'<a class="btn btn-donate" href="{e(link)}" target="_blank" rel="noopener">{e(name)}</a>')
+        else:
+            out.append(f'<span class="btn btn-donate is-off" aria-disabled="true">{e(name)}<small>{t("скоро", "soon")}</small></span>')
+    return "".join(out)
+
+
+def ticker():
+    seen, items = set(), []
+    for tr in TRAINERS:
+        for g in FUNCS[tr["funcs"]]:
+            for i in g["items"]:
+                if i["ru"] not in seen and len(items) < 26:
+                    seen.add(i["ru"])
+                    items.append(i)
+    row = "".join(f'<span>{t(i["ru"], i["en"])}</span>' for i in items)
+    return f'<div class="ticker" aria-hidden="true"><div class="ticker-track">{row}{row}</div></div>'
 
 
 def build():
     total = sum(count(tr) for tr in TRAINERS)
-    cards = "".join(card(tr) for tr in TRAINERS)
+    cards = "".join(card(tr, i) for i, tr in enumerate(TRAINERS))
     details = "".join(detail(tr) for tr in TRAINERS)
-    head = f'''<title>OFFEWS Trainers</title>
-<meta name="description" content="Трейнеры OFFEWS для одиночных игр: включаются кликом или горячей клавишей, без нампада, на русском и английском.">
-<meta name="theme-color" content="#111114">
+    front, back = TRAINERS[0], TRAINERS[1]
+    head = f"""<title>OFFEWS Trainers</title>
+<meta name="description" content="Трейнеры OFFEWS для одиночных игр: бессмертие, бесконечные патроны, убийство с одного удара и десятки других функций в один клик.">
+<meta name="theme-color" content="#0b0b0d">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Unbounded:wght@500;700;800&display=swap">
-<style>{open(os.path.join(ROOT, "style.css"), encoding="utf-8").read()}</style>'''
-    body = f'''<a class="skip" href="#catalog">{t("К трейнерам", "Skip to trainers")}</a>
-<header class="top">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Unbounded:wght@500;700;900&display=swap">
+<style>{open(os.path.join(ROOT, "style.css"), encoding="utf-8").read()}</style>"""
+    body = f"""<a class="skip" href="#catalog">{t("К трейнерам", "Skip to trainers")}</a>
+<header class="top" id="top">
   <div class="wrap top-row">
     <a class="brand" href="#" aria-label="OFFEWS">{EMBLEM}<span class="word"><b>OFF</b>EWS<small>TRAINERS</small></span></a>
-    <nav class="nav" aria-label="{e("Разделы")}">
-      <a href="#catalog">{t("Трейнеры", "Trainers")}</a>
-      <a href="#howto">{t("Как пользоваться", "How to use")}</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#catalog">{t("Игры", "Games")}</a>
+      <a href="#howto">{t("Как это работает", "How it works")}</a>
       <a href="#faq">{t("Вопросы", "FAQ")}</a>
+      <a class="nav-donate" href="#support">{t("Поддержать", "Support")}</a>
     </nav>
     <div class="lang" role="group" aria-label="Language">
       <button type="button" id="lang-ru" data-set-lang="ru" aria-pressed="true">RU</button>
@@ -210,31 +242,39 @@ def build():
 </header>
 
 <main>
-  <section class="hero">
+  <section class="hero" style="--art-a:url('{back["poster"]}'); --art-b:url('{front["poster"]}')">
+    <canvas class="embers" aria-hidden="true"></canvas>
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">{t("Трейнеры для одиночных игр", "Trainers for single-player games")}</p>
-        <h1>{t("Включай читы кликом. Нампад не нужен.", "Switch cheats on with a click. No numpad needed.")}</h1>
-        <p class="lead">{t("Трейнер сам находит запущенную игру. Функции включаются в окне или горячими клавишами, клавиши можно переназначить. Интерфейс на русском и английском.", "The trainer finds the running game by itself. Turn functions on in its window or with hotkeys you can rebind. Russian and English interface.")}</p>
-        <div class="hero-stats">
-          <div><b>{len(TRAINERS)}</b>{t(plural_ru(len(TRAINERS), "трейнер", "трейнера", "трейнеров"), "trainers")}</div>
-          <div><b>{total}</b>{t(plural_ru(total, "функция", "функции", "функций"), "functions")}</div>
-          <div><b>0</b>{t("нужно установить", "to install")}</div>
+        <div class="hero-mark" aria-hidden="true">{EMBLEM}</div>
+        <h1>{t("Играй", "Play by")}<br><em>{t("по своим", "your own")}</em><br>{t("правилам", "rules")}</h1>
+        <p class="lead">{t("Трейнеры для одиночных игр: бессмертие, бесконечные патроны, убийство с одного удара и ещё десятки функций. Запускаешь, трейнер сам находит игру, всё включается в один клик.", "Trainers for single-player games: god mode, unlimited ammo, one-hit kills and dozens more. Start it, the trainer finds the game, every function is one click away.")}</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-big" href="#catalog">{POWER_SMALL}{t("Выбрать игру", "Pick a game")}</a>
+          <a class="btn btn-ghost btn-big" href="#howto">{t("Как это работает", "How it works")}</a>
         </div>
-        <a class="btn btn-primary btn-big" href="#catalog">{POWER_SMALL}{t("Выбрать игру", "Pick a game")}</a>
+        <dl class="hero-stats">
+          <div><dt>{t("игры", "games")}</dt><dd>{len(TRAINERS)}</dd></div>
+          <div><dt>{t(plural_ru(total, "функция", "функции", "функций"), "functions")}</dt><dd>{total}</dd></div>
+          <div><dt>{t("языка", "languages")}</dt><dd>RU/EN</dd></div>
+        </dl>
       </div>
-      <figure class="hero-shot">
-        <img src="{TRAINERS[0]["shots"][0][0]}" alt="{e("Окно трейнера " + TRAINERS[0]["title"])}" width="1174" height="628">
-        <figcaption>{t("Так выглядит трейнер: слева игра и её версия, справа функции с горячими клавишами.", "This is the trainer: the game and its version on the left, functions with hotkeys on the right.")}</figcaption>
-      </figure>
+      <div class="stage" aria-hidden="true">
+        <div class="stage-inner">
+          <img class="win win-back" src="{back["shots"][0][0]}" alt="" width="1346" height="820">
+          <img class="win win-front" src="{front["shots"][0][0]}" alt="" width="1174" height="628">
+          <span class="stage-glow"></span>
+        </div>
+      </div>
     </div>
+    {ticker()}
   </section>
 
   <section class="catalog" id="catalog" aria-labelledby="catalog-title">
     <div class="wrap">
-      <div class="section-head">
-        <h2 id="catalog-title">{t("Трейнеры", "Trainers")}</h2>
-        <p>{t("Новые игры появляются по мере выхода. Каждый трейнер проверен на указанной версии игры.", "New games are added as they come out. Each trainer is tested on the game version shown.")}</p>
+      <div class="section-head reveal">
+        <p class="eyebrow">{t("Каталог", "Catalog")}</p>
+        <h2 id="catalog-title">{t("Выбери игру", "Pick your game")}</h2>
       </div>
       <div class="cards">{cards}
       </div>
@@ -243,30 +283,50 @@ def build():
 {details}
   <section class="howto" id="howto" aria-labelledby="howto-title">
     <div class="wrap">
-      <div class="section-head"><h2 id="howto-title">{t("Как пользоваться", "How to use")}</h2></div>
+      <div class="section-head reveal">
+        <p class="eyebrow">{t("Как это работает", "How it works")}</p>
+        <h2 id="howto-title">{t("Четыре шага до бессмертия", "Four steps to god mode")}</h2>
+      </div>
       <ol class="steps">
-        <li><b>{t("Скачайте трейнер", "Download the trainer")}</b><p>{t("Это один exe-файл, устанавливать ничего не нужно. Положите его в любую папку.", "It is a single exe, nothing to install. Put it in any folder.")}</p></li>
-        <li><b>{t("Запустите трейнер и игру", "Start the trainer and the game")}</b><p>{t("В любом порядке: трейнер сам найдёт игру и подключится.", "In any order: the trainer finds the game and connects.")}</p></li>
-        <li><b>{t("Дождитесь «подключено»", "Wait for “connected”")}</b><p>{t("Статус виден внизу окна трейнера. Загрузите сохранение или главу.", "The status is at the bottom of the trainer window. Load a save or a chapter.")}</p></li>
-        <li><b>{t("Включайте функции", "Turn functions on")}</b><p>{t("Кликом по переключателю или горячей клавишей прямо в игре.", "Click a switch, or press its hotkey right in the game.")}</p></li>
+        <li class="reveal"><b>{t("Скачай", "Download")}</b><p>{t("Один exe-файл, устанавливать ничего не нужно.", "A single exe, nothing to install.")}</p></li>
+        <li class="reveal"><b>{t("Запусти трейнер и игру", "Start trainer and game")}</b><p>{t("В любом порядке: трейнер сам найдёт игру.", "In any order: the trainer finds the game.")}</p></li>
+        <li class="reveal"><b>{t("Дождись «подключено»", "Wait for “connected”")}</b><p>{t("Статус внизу окна. Загрузи сохранение или главу.", "Status is at the bottom. Load a save or chapter.")}</p></li>
+        <li class="reveal"><b>{t("Включай", "Switch on")}</b><p>{t("Кликом в окне или горячей клавишей прямо в игре.", "Click in the window or press a hotkey in game.")}</p></li>
       </ol>
     </div>
   </section>
 
-  <section class="faq" id="faq" aria-labelledby="faq-title">
+  <section class="support" id="support" aria-labelledby="support-title">
     <div class="wrap">
-      <div class="section-head"><h2 id="faq-title">{t("Вопросы", "FAQ")}</h2></div>
+      <div class="support-panel reveal">
+        <div class="support-mark" aria-hidden="true">{EMBLEM}</div>
+        <div class="support-copy">
+          <p class="eyebrow">{t("Поддержать OFFEWS", "Support OFFEWS")}</p>
+          <h2 id="support-title">{t("Трейнеры бесплатные. Донаты делают их быстрее", "The trainers are free. Donations make them faster")}</h2>
+          <p class="lead">{t("Каждый трейнер — это дни разбора игры и проверок после патчей. Если трейнер пригодился, поддержи проект: донаты идут на новые игры и обновления.", "Every trainer takes days of digging into the game and re-testing after patches. If one helped you, support the project: donations go to new games and updates.")}</p>
+          <div class="donate-row">{donate_buttons()}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq-grid">
+      <div class="section-head reveal">
+        <p class="eyebrow">{t("Вопросы", "FAQ")}</p>
+        <h2 id="faq-title">{t("Частые вопросы", "Common questions")}</h2>
+      </div>
       <div class="faq-list">
-        <details open><summary>{t("Антивирус ругается на трейнер. Это вирус?", "My antivirus flags the trainer. Is it a virus?")}</summary>
+        <details class="reveal" open><summary>{t("Антивирус ругается на трейнер. Это вирус?", "My antivirus flags the trainer. Is it a virus?")}</summary>
           <p>{t("Нет. Трейнер меняет память игры, и некоторые антивирусы по эвристике считают это подозрительным. Обычно срабатывает один антивирус из семидесяти. Трейнер ничего не скачивает, не устанавливает и не отправляет в сеть.", "No. The trainer changes the game’s memory, and some antivirus heuristics find that suspicious. Usually one scanner out of seventy reacts. The trainer downloads, installs and sends nothing.")}</p></details>
-        <details><summary>{t("Можно ли играть с трейнером по сети?", "Can I use a trainer online?")}</summary>
+        <details class="reveal"><summary>{t("Можно ли играть с трейнером по сети?", "Can I use a trainer online?")}</summary>
           <p>{t("Нет. Трейнеры сделаны только для одиночной игры. Если трейнер видит античит или сетевую игру, функции не включаются.", "No. The trainers are for single-player only. If a trainer detects an anti-cheat or an online session, functions stay off.")}</p></details>
-        <details><summary>{t("Игра обновилась, и трейнер перестал работать", "The game updated and the trainer stopped working")}</summary>
-          <p>{t("Сравните версию игры в окне трейнера с проверенной. Если они различаются, дождитесь обновления трейнера.", "Compare the game version in the trainer window with the tested one. If they differ, wait for a trainer update.")}</p></details>
-        <details><summary>{t("Трейнер не запускается", "The trainer does not start")}</summary>
+        <details class="reveal"><summary>{t("Игра обновилась, и трейнер перестал работать", "The game updated and the trainer stopped working")}</summary>
+          <p>{t("Сравни версию игры в окне трейнера с проверенной. Если они различаются, дождись обновления трейнера.", "Compare the game version in the trainer window with the tested one. If they differ, wait for a trainer update.")}</p></details>
+        <details class="reveal"><summary>{t("Трейнер не запускается", "The trainer does not start")}</summary>
           <p>{t("Нужен .NET Framework 4.8. В Windows 10 и 11 он уже есть, в старых системах его можно поставить с сайта Microsoft.", "It needs .NET Framework 4.8. Windows 10 and 11 already have it; on older systems install it from Microsoft.")}</p></details>
-        <details><summary>{t("Не испортит ли трейнер сохранения?", "Can the trainer break my saves?")}</summary>
-          <p>{t("Функции меняют игру только пока включены. Перед изменением денег, предметов и опыта на всякий случай сделайте копию сохранений.", "Functions only change the game while they are on. Before changing money, items or experience, back up your saves just in case.")}</p></details>
+        <details class="reveal"><summary>{t("Не испортит ли трейнер сохранения?", "Can the trainer break my saves?")}</summary>
+          <p>{t("Функции меняют игру, только пока включены. Перед изменением денег, предметов и опыта на всякий случай сделай копию сохранений.", "Functions only change the game while they are on. Before changing money, items or experience, back up your saves just in case.")}</p></details>
       </div>
     </div>
   </section>
@@ -275,11 +335,11 @@ def build():
 <footer class="foot">
   <div class="wrap foot-row">
     <a class="brand brand-small" href="#" aria-label="OFFEWS">{EMBLEM}<span class="word"><b>OFF</b>EWS</span></a>
-    <p>{t("Трейнеры для одиночных игр. Используйте их только в одиночной игре.", "Trainers for single-player games. Use them in single-player only.")}</p>
+    <p>{t("Трейнеры только для одиночной игры. OFFEWS не связан с разработчиками и издателями игр, названия и изображения игр принадлежат их владельцам.", "Trainers for single-player only. OFFEWS is not affiliated with game developers or publishers; game names and images belong to their owners.")}</p>
     <p class="mono">© 2026 OFFEWS</p>
   </div>
 </footer>
-<script>{open(os.path.join(ROOT, "site.js"), encoding="utf-8").read()}</script>'''
+<script>{open(os.path.join(ROOT, "site.js"), encoding="utf-8").read()}</script>"""
 
     with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
         f.write('<!doctype html>\n<html lang="ru" data-lang="ru">\n<head>\n<meta charset="utf-8">\n'
