@@ -264,6 +264,7 @@ def head_tags(title, desc, url, image, extra=""):
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{url}">
 <meta name="google-site-verification" content="LGgZCnU1x5ZTDmNnzVbXTUddLsuJ42UH349fdWI2jtk">
+<meta name="yandex-verification" content="db4692bf265461a0">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="OFFEWS Trainers">
 <meta property="og:title" content="{e(title)}">
