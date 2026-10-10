@@ -235,6 +235,7 @@ def build():
     head = f"""<title>OFFEWS — трейнеры для Gears of War: E-Day и Hellraiser: Revival</title>
 <meta name="description" content="Бесплатные трейнеры OFFEWS для одиночных игр: Gears of War: E-Day (+11) и Clive Barker's Hellraiser: Revival (+53). Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик.">
 <link rel="canonical" href="{SITE_URL}">
+<meta name="google-site-verification" content="LGgZCnU1x5ZTDmNnzVbXTUddLsuJ42UH349fdWI2jtk">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="OFFEWS Trainers">
 <meta property="og:title" content="OFFEWS — трейнеры для одиночных игр">
