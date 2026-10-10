@@ -2,8 +2,16 @@
   {
     "assets": [
       {
-        "name": "HellraiserRevivalTrainer-1.0.0.exe",
+        "name": "SilverPinesTrainer-1.0.0.exe",
         "download_count": 0
+      }
+    ]
+  },
+  {
+    "assets": [
+      {
+        "name": "HellraiserRevivalTrainer-1.0.0.exe",
+        "download_count": 23
       }
     ]
   },
@@ -27,7 +35,7 @@
     "assets": [
       {
         "name": "GearsEDayTrainer-1.0.0.exe",
-        "download_count": 0
+        "download_count": 3
       }
     ]
   },
@@ -51,7 +59,7 @@
     "assets": [
       {
         "name": "EndOfAbyssTrainer-1.0.0.exe",
-        "download_count": 0
+        "download_count": 18
       }
     ]
   }
