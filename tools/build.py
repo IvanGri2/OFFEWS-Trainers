@@ -127,7 +127,7 @@ REPO = "IvanGri2/OFFEWS-Trainers"
 
 # Comments: giscus stores each trainer's thread as a GitHub Discussion in REPO. The section is
 # left out until category_id is filled in (Discussions on, giscus app installed).
-GISCUS = {"repo_id": "R_kgDOVDfyEw", "category": "Announcements", "category_id": ""}
+GISCUS = {"repo_id": "R_kgDOVDfyEw", "category": "Announcements", "category_id": "DIC_kwDOVDfyE84DHe5a"}
 
 
 def comments(tr):
