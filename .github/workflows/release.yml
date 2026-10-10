@@ -6,7 +6,7 @@ name: Release trainers
 on:
   push:
     branches: [main]
-    paths: ["downloads/**"]
+    paths: ["downloads/**", ".github/workflows/release.yml"]
   workflow_dispatch:
 
 permissions:
