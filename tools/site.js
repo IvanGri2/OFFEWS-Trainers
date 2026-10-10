@@ -92,6 +92,26 @@
     } else for (var cs2 = 0; cs2 < commentSlots.length; cs2++) loadComments(commentSlots[cs2]);
   }
 
+  // ---- comments: Cusdis (no account), all trainer threads rendered once its script is in -------
+  var cusdisSlots = document.querySelectorAll(".cusdis-slot");
+  if (cusdisSlots.length) {
+    if (root.getAttribute("data-lang") !== "en")
+      window.CUSDIS_LOCALE = window.CUSIDS_LOCALE = {
+        powered_by: "Комментарии Cusdis", post_comment: "Отправить", loading: "Загрузка",
+        email: "Email (необязательно)", nickname: "Имя", reply_placeholder: "Ответ...", reply_btn: "Ответить",
+        sending: "отправка...", mod_badge: "АВТОР", content_is_required: "Напиши комментарий",
+        nickname_is_required: "Укажи имя", comment_has_been_sent: "Комментарий отправлен и появится после проверки."
+      };
+    var cu = document.createElement("script");
+    cu.src = "https://cusdis.com/js/cusdis.es.js";
+    cu.async = true;
+    cu.onload = function () {
+      if (typeof window.renderCusdis !== "function") return;
+      for (var i = 0; i < cusdisSlots.length; i++) window.renderCusdis(cusdisSlots[i]);
+    };
+    document.body.appendChild(cu);
+  }
+
   if (reduce) return;
 
   // ---- hero stage follows the pointer -------------------------------------------------------

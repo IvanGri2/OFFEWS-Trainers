@@ -363,5 +363,6 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
 /* ---- comments (giscus) --------------------------------------------------------------------- */
 .comments { display: grid; gap: 10px; margin-top: 18px; padding-top: 28px; border-top: 1px solid var(--line); }
 .comments h3 { font: 700 clamp(22px, 3vw, 30px)/1.1 var(--font-display); }
-.giscus-slot { min-height: 120px; }
+.giscus-slot, .cusdis-slot { min-height: 120px; }
+.cusdis-slot iframe { width: 100%; border: 0; color-scheme: dark; }
 .giscus-slot .giscus, .giscus-slot iframe { width: 100%; }

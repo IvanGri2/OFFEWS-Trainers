@@ -384,7 +384,8 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
 /* ---- comments (giscus) --------------------------------------------------------------------- */
 .comments { display: grid; gap: 10px; margin-top: 18px; padding-top: 28px; border-top: 1px solid var(--line); }
 .comments h3 { font: 700 clamp(22px, 3vw, 30px)/1.1 var(--font-display); }
-.giscus-slot { min-height: 120px; }
+.giscus-slot, .cusdis-slot { min-height: 120px; }
+.cusdis-slot iframe { width: 100%; border: 0; color-scheme: dark; }
 .giscus-slot .giscus, .giscus-slot iframe { width: 100%; }
 </style>
 </head>
@@ -501,8 +502,7 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
         <section class="comments reveal" aria-labelledby="gears-e-day-comments">
           <h3 id="gears-e-day-comments"><span lang="ru">Комментарии</span><span lang="en">Comments</span></h3>
           <p class="demo-hint"><span lang="ru">Пиши, что работает, что нет и какую функцию добавить. Для комментария нужен аккаунт GitHub.</span><span lang="en">Tell what works, what doesn&#x27;t and which function to add. Commenting needs a GitHub account.</span></p>
-          <div class="giscus-slot" data-term="gears-e-day" data-repo="IvanGri2/OFFEWS-Trainers" data-repo-id="R_kgDOVDfyEw"
-               data-category="Announcements" data-category-id="DIC_kwDOVDfyE84DHe5a"></div>
+          <div class="giscus-slot" data-term="gears-e-day" data-repo="IvanGri2/OFFEWS-Trainers" data-repo-id="R_kgDOVDfyEw" data-category="Announcements" data-category-id="DIC_kwDOVDfyE84DHe5a"></div>
         </section>
       </div>
     </section>
@@ -535,8 +535,7 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
         <section class="comments reveal" aria-labelledby="hellraiser-revival-comments">
           <h3 id="hellraiser-revival-comments"><span lang="ru">Комментарии</span><span lang="en">Comments</span></h3>
           <p class="demo-hint"><span lang="ru">Пиши, что работает, что нет и какую функцию добавить. Для комментария нужен аккаунт GitHub.</span><span lang="en">Tell what works, what doesn&#x27;t and which function to add. Commenting needs a GitHub account.</span></p>
-          <div class="giscus-slot" data-term="hellraiser-revival" data-repo="IvanGri2/OFFEWS-Trainers" data-repo-id="R_kgDOVDfyEw"
-               data-category="Announcements" data-category-id="DIC_kwDOVDfyE84DHe5a"></div>
+          <div class="giscus-slot" data-term="hellraiser-revival" data-repo="IvanGri2/OFFEWS-Trainers" data-repo-id="R_kgDOVDfyEw" data-category="Announcements" data-category-id="DIC_kwDOVDfyE84DHe5a"></div>
         </section>
       </div>
     </section>
@@ -690,6 +689,26 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
       }, { rootMargin: "600px 0px" });
       for (var cs = 0; cs < commentSlots.length; cs++) co.observe(commentSlots[cs]);
     } else for (var cs2 = 0; cs2 < commentSlots.length; cs2++) loadComments(commentSlots[cs2]);
+  }
+
+  // ---- comments: Cusdis (no account), all trainer threads rendered once its script is in -------
+  var cusdisSlots = document.querySelectorAll(".cusdis-slot");
+  if (cusdisSlots.length) {
+    if (root.getAttribute("data-lang") !== "en")
+      window.CUSDIS_LOCALE = window.CUSIDS_LOCALE = {
+        powered_by: "Комментарии Cusdis", post_comment: "Отправить", loading: "Загрузка",
+        email: "Email (необязательно)", nickname: "Имя", reply_placeholder: "Ответ...", reply_btn: "Ответить",
+        sending: "отправка...", mod_badge: "АВТОР", content_is_required: "Напиши комментарий",
+        nickname_is_required: "Укажи имя", comment_has_been_sent: "Комментарий отправлен и появится после проверки."
+      };
+    var cu = document.createElement("script");
+    cu.src = "https://cusdis.com/js/cusdis.es.js";
+    cu.async = true;
+    cu.onload = function () {
+      if (typeof window.renderCusdis !== "function") return;
+      for (var i = 0; i < cusdisSlots.length; i++) window.renderCusdis(cusdisSlots[i]);
+    };
+    document.body.appendChild(cu);
   }
 
   if (reduce) return;

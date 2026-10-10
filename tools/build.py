@@ -125,20 +125,31 @@ EMBLEM = ('<svg class="emblem" viewBox="0 0 48 48" aria-hidden="true">'
 SITE_URL = "https://ivangri2.github.io/OFFEWS-Trainers/"
 REPO = "IvanGri2/OFFEWS-Trainers"
 
-# Comments: giscus stores each trainer's thread as a GitHub Discussion in REPO. The section is
-# left out until category_id is filled in (Discussions on, giscus app installed).
+# Comments. Cusdis (cusdis.com) takes a name and a comment, no account needed, and each comment
+# waits for approval in the Cusdis dashboard. Until its app_id is filled in, the page falls back
+# to giscus, which stores each trainer's thread as a GitHub Discussion in REPO.
+CUSDIS = {"app_id": ""}
 GISCUS = {"repo_id": "R_kgDOVDfyEw", "category": "Announcements", "category_id": "DIC_kwDOVDfyE84DHe5a"}
 
 
 def comments(tr):
-    if not GISCUS["category_id"]:
+    if CUSDIS["app_id"]:
+        hint = t("Пиши, что работает, что нет и какую функцию добавить. Регистрация не нужна, комментарий появится после проверки.",
+                 "Tell what works, what doesn't and which function to add. No sign-up needed; comments appear after review.")
+        slot = (f'<div class="cusdis-slot" data-host="https://cusdis.com" data-app-id="{CUSDIS["app_id"]}" '
+                f'data-page-id="{e(tr["id"])}" data-page-url="{SITE_URL}#{e(tr["id"])}" data-page-title="{e(tr["title"])}" data-theme="dark"></div>')
+    elif GISCUS["category_id"]:
+        hint = t("Пиши, что работает, что нет и какую функцию добавить. Для комментария нужен аккаунт GitHub.",
+                 "Tell what works, what doesn't and which function to add. Commenting needs a GitHub account.")
+        slot = (f'<div class="giscus-slot" data-term="{e(tr["id"])}" data-repo="{REPO}" data-repo-id="{GISCUS["repo_id"]}" '
+                f'data-category="{e(GISCUS["category"])}" data-category-id="{GISCUS["category_id"]}"></div>')
+    else:
         return ""
     return f"""
         <section class="comments reveal" aria-labelledby="{tr["id"]}-comments">
           <h3 id="{tr["id"]}-comments">{t("Комментарии", "Comments")}</h3>
-          <p class="demo-hint">{t("Пиши, что работает, что нет и какую функцию добавить. Для комментария нужен аккаунт GitHub.", "Tell what works, what doesn't and which function to add. Commenting needs a GitHub account.")}</p>
-          <div class="giscus-slot" data-term="{e(tr["id"])}" data-repo="{REPO}" data-repo-id="{GISCUS["repo_id"]}"
-               data-category="{e(GISCUS["category"])}" data-category-id="{GISCUS["category_id"]}"></div>
+          <p class="demo-hint">{hint}</p>
+          {slot}
         </section>"""
 
 
