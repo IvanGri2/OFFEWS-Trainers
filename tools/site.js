@@ -36,6 +36,41 @@
     if (sw) sw.setAttribute("aria-pressed", String(sw.getAttribute("aria-pressed") !== "true"));
   });
 
+  // ---- download counters: summed from GitHub release assets, cached for ten minutes ----------
+  var slots = document.querySelectorAll("[data-dl]");
+  function pluralRu(n, one, few, many) {
+    if (n % 10 === 1 && n % 100 !== 11) return one;
+    if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) return few;
+    return many;
+  }
+  function showCounts(releases) {
+    for (var i = 0; i < slots.length; i++) {
+      var prefix = slots[i].getAttribute("data-dl"), n = 0;
+      for (var r = 0; r < releases.length; r++)
+        for (var a = 0; a < (releases[r].assets || []).length; a++)
+          if (releases[r].assets[a].name.indexOf(prefix) === 0) n += releases[r].assets[a].download_count || 0;
+      if (!n) continue;
+      var num = n.toLocaleString("ru-RU");
+      slots[i].innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg><b>' + num + '</b>' +
+        '<span lang="ru">' + pluralRu(n, "скачивание", "скачивания", "скачиваний") + '</span>' +
+        '<span lang="en">' + (n === 1 ? "download" : "downloads") + '</span>';
+      slots[i].hidden = false;
+    }
+  }
+  if (slots.length && window.fetch) {
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem("offews-dl")); } catch (e) {}
+    if (cached && Date.now() - cached.at < 600000) showCounts(cached.data);
+    else fetch("https://api.github.com/repos/IvanGri2/OFFEWS-Trainers/releases?per_page=100")
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (data) {
+        var slim = data.map(function (r) { return { assets: (r.assets || []).map(function (a) { return { name: a.name, download_count: a.download_count }; }) }; });
+        try { sessionStorage.setItem("offews-dl", JSON.stringify({ at: Date.now(), data: slim })); } catch (e) {}
+        showCounts(slim);
+      })
+      .catch(function () {});
+  }
+
   if (reduce) return;
 
   // ---- hero stage follows the pointer -------------------------------------------------------

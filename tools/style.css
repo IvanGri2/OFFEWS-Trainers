@@ -350,3 +350,10 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .embers { display: none; }
 }
+
+/* ---- download counters (filled in by site.js) --------------------------------------------- */
+.card-dl, .dl-count { display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-size: 13px; }
+.card-dl[hidden], .dl-count[hidden] { display: none; }
+.card-dl svg, .dl-count svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; color: var(--glow, #ff4747); }
+.card-dl b, .dl-count b { font: 700 15px/1 var(--font-display); color: var(--ink); font-variant-numeric: tabular-nums; }
+.card-dl { position: absolute; top: 18px; right: 18px; padding: 9px 12px; border-radius: 10px; background: rgba(10, 10, 12, .6); backdrop-filter: blur(8px); border: 1px solid var(--line-hi); font-size: 12px; }

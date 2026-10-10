@@ -370,6 +370,13 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .embers { display: none; }
 }
+
+/* ---- download counters (filled in by site.js) --------------------------------------------- */
+.card-dl, .dl-count { display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-size: 13px; }
+.card-dl[hidden], .dl-count[hidden] { display: none; }
+.card-dl svg, .dl-count svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; color: var(--glow, #ff4747); }
+.card-dl b, .dl-count b { font: 700 15px/1 var(--font-display); color: var(--ink); font-variant-numeric: tabular-nums; }
+.card-dl { position: absolute; top: 18px; right: 18px; padding: 9px 12px; border-radius: 10px; background: rgba(10, 10, 12, .6); backdrop-filter: blur(8px); border: 1px solid var(--line-hi); font-size: 12px; }
 </style>
 </head>
 <body>
@@ -431,6 +438,7 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
           <img class="card-art" src="assets/gears-eday-poster.jpg" alt="" width="480" height="720" loading="lazy">
           <span class="card-glare" aria-hidden="true"></span>
           <span class="card-count"><b>+11</b><span lang="ru">функций</span><span lang="en">functions</span></span>
+          <span class="card-dl" data-dl="GearsEDayTrainer-" hidden></span>
           <span class="card-info">
             <span class="card-ver mono">v0.3.3 · <span lang="ru">omega-release, сборка 4894958</span><span lang="en">omega-release, build 4894958</span></span>
             <span class="card-title">Gears of War: E-Day</span>
@@ -443,6 +451,7 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
           <img class="card-art" src="assets/hellraiser-poster.jpg" alt="" width="480" height="720" loading="lazy">
           <span class="card-glare" aria-hidden="true"></span>
           <span class="card-count"><b>+53</b><span lang="ru">функции</span><span lang="en">functions</span></span>
+          <span class="card-dl" data-dl="HellraiserRevivalTrainer-" hidden></span>
           <span class="card-info">
             <span class="card-ver mono">v0.7.7 · <span lang="ru">1.0.1, сборка 227219</span><span lang="en">1.0.1, build 227219</span></span>
             <span class="card-title">Clive Barker&#x27;s Hellraiser: Revival</span>
@@ -468,7 +477,7 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
               <div><dt><span lang="ru">Обновлён</span><span lang="en">Updated</span></dt><dd><span lang="ru">10 октября 2026</span><span lang="en">October 10, 2026</span></dd></div>
               <div><dt><span lang="ru">Режим</span><span lang="en">Mode</span></dt><dd><span lang="ru">Одиночная кампания</span><span lang="en">Single-player campaign</span></dd></div>
             </dl>
-            <div class="trainer-actions"><a class="btn btn-primary btn-big" href="downloads/GearsEDayTrainer-0.3.3.exe" download><svg class="pw" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.6a7.5 7.5 0 1 0 9 0" /><path d="M12 3v8" /></svg><span lang="ru">Скачать</span><span lang="en">Download</span><small>v0.3.3 · 336 <span lang="ru">КБ</span><span lang="en">KB</span></small></a><span class="req">Windows 10/11 · .NET Framework 4.8</span></div>
+            <div class="trainer-actions"><a class="btn btn-primary btn-big" href="https://github.com/IvanGri2/OFFEWS-Trainers/releases/download/GearsEDayTrainer-0.3.3/GearsEDayTrainer-0.3.3.exe"><svg class="pw" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.6a7.5 7.5 0 1 0 9 0" /><path d="M12 3v8" /></svg><span lang="ru">Скачать</span><span lang="en">Download</span><small>v0.3.3 · 336 <span lang="ru">КБ</span><span lang="en">KB</span></small></a><span class="dl-count" data-dl="GearsEDayTrainer-" hidden></span><span class="req">Windows 10/11 · .NET Framework 4.8</span></div>
           </div>
         </div>
       </div>
@@ -492,7 +501,7 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
               <div><dt><span lang="ru">Обновлён</span><span lang="en">Updated</span></dt><dd><span lang="ru">10 октября 2026</span><span lang="en">October 10, 2026</span></dd></div>
               <div><dt><span lang="ru">Режим</span><span lang="en">Mode</span></dt><dd><span lang="ru">Одиночная игра</span><span lang="en">Single-player</span></dd></div>
             </dl>
-            <div class="trainer-actions"><a class="btn btn-primary btn-big" href="downloads/HellraiserRevivalTrainer-0.7.7.exe" download><svg class="pw" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.6a7.5 7.5 0 1 0 9 0" /><path d="M12 3v8" /></svg><span lang="ru">Скачать</span><span lang="en">Download</span><small>v0.7.7 · 333 <span lang="ru">КБ</span><span lang="en">KB</span></small></a><span class="req">Windows 10/11 · .NET Framework 4.8</span></div>
+            <div class="trainer-actions"><a class="btn btn-primary btn-big" href="https://github.com/IvanGri2/OFFEWS-Trainers/releases/download/HellraiserRevivalTrainer-0.7.7/HellraiserRevivalTrainer-0.7.7.exe"><svg class="pw" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.6a7.5 7.5 0 1 0 9 0" /><path d="M12 3v8" /></svg><span lang="ru">Скачать</span><span lang="en">Download</span><small>v0.7.7 · 333 <span lang="ru">КБ</span><span lang="en">KB</span></small></a><span class="dl-count" data-dl="HellraiserRevivalTrainer-" hidden></span><span class="req">Windows 10/11 · .NET Framework 4.8</span></div>
           </div>
         </div>
       </div>
@@ -597,6 +606,41 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
     var sw = e.target.closest && e.target.closest(".sw");
     if (sw) sw.setAttribute("aria-pressed", String(sw.getAttribute("aria-pressed") !== "true"));
   });
+
+  // ---- download counters: summed from GitHub release assets, cached for ten minutes ----------
+  var slots = document.querySelectorAll("[data-dl]");
+  function pluralRu(n, one, few, many) {
+    if (n % 10 === 1 && n % 100 !== 11) return one;
+    if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) return few;
+    return many;
+  }
+  function showCounts(releases) {
+    for (var i = 0; i < slots.length; i++) {
+      var prefix = slots[i].getAttribute("data-dl"), n = 0;
+      for (var r = 0; r < releases.length; r++)
+        for (var a = 0; a < (releases[r].assets || []).length; a++)
+          if (releases[r].assets[a].name.indexOf(prefix) === 0) n += releases[r].assets[a].download_count || 0;
+      if (!n) continue;
+      var num = n.toLocaleString("ru-RU");
+      slots[i].innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg><b>' + num + '</b>' +
+        '<span lang="ru">' + pluralRu(n, "скачивание", "скачивания", "скачиваний") + '</span>' +
+        '<span lang="en">' + (n === 1 ? "download" : "downloads") + '</span>';
+      slots[i].hidden = false;
+    }
+  }
+  if (slots.length && window.fetch) {
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem("offews-dl")); } catch (e) {}
+    if (cached && Date.now() - cached.at < 600000) showCounts(cached.data);
+    else fetch("https://api.github.com/repos/IvanGri2/OFFEWS-Trainers/releases?per_page=100")
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (data) {
+        var slim = data.map(function (r) { return { assets: (r.assets || []).map(function (a) { return { name: a.name, download_count: a.download_count }; }) }; });
+        try { sessionStorage.setItem("offews-dl", JSON.stringify({ at: Date.now(), data: slim })); } catch (e) {}
+        showCounts(slim);
+      })
+      .catch(function () {});
+  }
 
   if (reduce) return;
 

@@ -1,0 +1,34 @@
+# Publishes every trainer in downloads/ as a GitHub release tagged with its file name
+# (downloads/GearsEDayTrainer-0.3.3.exe -> tag GearsEDayTrainer-0.3.3). The site links to these
+# release assets, so GitHub counts each download. Existing releases are left alone.
+name: Release trainers
+
+on:
+  push:
+    branches: [main]
+    paths: ["downloads/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create missing releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for f in downloads/*.exe; do
+            name=$(basename "$f")
+            tag="${name%.exe}"
+            if gh release view "$tag" >/dev/null 2>&1; then
+              echo "$tag already released"
+              continue
+            fi
+            md5=$(md5sum "$f" | cut -d' ' -f1)
+            gh release create "$tag" "$f" --target "$GITHUB_SHA" --title "$tag" \
+              --notes "Трейнер OFFEWS для одиночной игры. Скачать и описание: https://ivangri2.github.io/OFFEWS-Trainers/  MD5: $md5"
+          done

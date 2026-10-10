@@ -14,8 +14,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.dirname(ROOT)   # the repository root is the published site
 FUNCS = json.load(open(os.path.join(ROOT, "trainers-functions.json"), encoding="utf-8"))
 
-# Download links: fill in once the files are on GitHub Releases. An empty link shows a
-# disabled button.
+# "download" is the file in downloads/. The release workflow publishes every file there as a
+# GitHub release tagged with the file name, and the button links to that release asset so GitHub
+# counts the downloads; "dl_prefix" sums the counts across all versions of a trainer.
 TRAINERS = [
     {
         "id": "gears-e-day",
@@ -32,6 +33,7 @@ TRAINERS = [
         "about_ru": "Бессмертие героя и отряда, бесконечные патроны и гранаты, убийство с одного выстрела, заморозка врагов, множитель урона и скорость игры.",
         "about_en": "Invincible hero and squad, unlimited ammo and grenades, one-hit kills, frozen enemies, a damage multiplier and game speed.",
         "download": "downloads/GearsEDayTrainer-0.3.3.exe",
+        "dl_prefix": "GearsEDayTrainer-",
         "size_kb": 336,
         "glow": "#ff5a1f",
         "highlights": [("Бессмертие отряда", "Immortal squad"), ("Убийство с одного выстрела", "One-hit kills"),
@@ -53,6 +55,7 @@ TRAINERS = [
         "about_ru": "Режим бога и полёт, бесконечные страдания и патроны, монеты и предметы, убийство всех врагов, открытая карта, режим призрака, телепорт и сохранение в любом месте.",
         "about_en": "God mode and flight, unlimited suffering and ammo, coins and items, kill all enemies, full map reveal, ghost mode, teleport and save anywhere.",
         "download": "downloads/HellraiserRevivalTrainer-0.7.7.exe",
+        "dl_prefix": "HellraiserRevivalTrainer-",
         "size_kb": 333,
         "glow": "#5f8cff",
         "highlights": [("Режим призрака", "Ghost mode"), ("Убить всех врагов", "Kill all enemies"),
@@ -105,7 +108,7 @@ def date_en(d):
 def download_button(tr, big=False):
     cls = "btn btn-primary" + (" btn-big" if big else "")
     if tr["download"]:
-        return (f'<a class="{cls}" href="{e(tr["download"])}" download>{POWER_SMALL}'
+        return (f'<a class="{cls}" href="{e(release_url(tr["download"]))}">{POWER_SMALL}'
                 f'{t("Скачать", "Download")}<small>v{tr["version"]} · {tr["size_kb"]} {t("КБ", "KB")}</small></a>')
     return (f'<span class="{cls} is-off" aria-disabled="true">{POWER_SMALL}'
             f'{t("Скоро на GitHub", "Coming to GitHub")}<small>v{tr["version"]}</small></span>')
@@ -120,6 +123,17 @@ EMBLEM = ('<svg class="emblem" viewBox="0 0 48 48" aria-hidden="true">'
 
 # Donation services: (name, link). An empty link shows the button as "soon".
 SITE_URL = "https://ivangri2.github.io/OFFEWS-Trainers/"
+REPO = "IvanGri2/OFFEWS-Trainers"
+
+
+def release_url(path):
+    name = os.path.basename(path)
+    return f"https://github.com/{REPO}/releases/download/{name[:-4]}/{name}"
+
+
+def dl_count(tr, cls):
+    """Filled in by site.js from the GitHub releases API; stays hidden until a count arrives."""
+    return f'<span class="{cls}" data-dl="{e(tr["dl_prefix"])}" hidden></span>' if tr.get("dl_prefix") else ""
 DONATE = [("DonationAlerts", "https://www.donationalerts.com/r/offews")]
 
 
@@ -135,6 +149,7 @@ def card(tr, i):
           <img class="card-art" src="{tr["poster"]}" alt="" width="480" height="720" loading="lazy">
           <span class="card-glare" aria-hidden="true"></span>
           <span class="card-count"><b>+{n}</b>{t(plural_ru(n, "функция", "функции", "функций"), "functions")}</span>
+          {dl_count(tr, "card-dl")}
           <span class="card-info">
             <span class="card-ver mono">v{tr["version"]} · {t(tr["game_build_ru"], tr["game_build_en"])}</span>
             <span class="card-title">{e(tr["title"])}</span>
@@ -178,7 +193,7 @@ def detail(tr):
               <div><dt>{t("Обновлён", "Updated")}</dt><dd>{t(date_ru(tr["updated"]), date_en(tr["updated"]))}</dd></div>
               <div><dt>{t("Режим", "Mode")}</dt><dd>{t(tr["mode_ru"], tr["mode_en"])}</dd></div>
             </dl>
-            <div class="trainer-actions">{download_button(tr, big=True)}<span class="req">Windows 10/11 · .NET Framework 4.8</span></div>
+            <div class="trainer-actions">{download_button(tr, big=True)}{dl_count(tr, "dl-count")}<span class="req">Windows 10/11 · .NET Framework 4.8</span></div>
           </div>
         </div>
       </div>
