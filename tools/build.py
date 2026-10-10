@@ -31,7 +31,7 @@ TRAINERS = [
         "mode_en": "Single-player campaign",
         "about_ru": "Бессмертие героя и отряда, бесконечные патроны и гранаты, убийство с одного выстрела, заморозка врагов, множитель урона и скорость игры.",
         "about_en": "Invincible hero and squad, unlimited ammo and grenades, one-hit kills, frozen enemies, a damage multiplier and game speed.",
-        "download": "",
+        "download": "downloads/GearsEDayTrainer-0.3.3.exe",
         "size_kb": 336,
         "glow": "#ff5a1f",
         "highlights": [("Бессмертие отряда", "Immortal squad"), ("Убийство с одного выстрела", "One-hit kills"),
@@ -52,7 +52,7 @@ TRAINERS = [
         "mode_en": "Single-player",
         "about_ru": "Режим бога и полёт, бесконечные страдания и патроны, монеты и предметы, убийство всех врагов, открытая карта, режим призрака, телепорт и сохранение в любом месте.",
         "about_en": "God mode and flight, unlimited suffering and ammo, coins and items, kill all enemies, full map reveal, ghost mode, teleport and save anywhere.",
-        "download": "",
+        "download": "downloads/HellraiserRevivalTrainer-0.7.7.exe",
         "size_kb": 333,
         "glow": "#5f8cff",
         "highlights": [("Режим призрака", "Ghost mode"), ("Убить всех врагов", "Kill all enemies"),
@@ -105,8 +105,8 @@ def date_en(d):
 def download_button(tr, big=False):
     cls = "btn btn-primary" + (" btn-big" if big else "")
     if tr["download"]:
-        return (f'<a class="{cls}" href="{e(tr["download"])}">{POWER_SMALL}'
-                f'{t("Скачать", "Download")}<small>v{tr["version"]} · {tr["size_kb"]} КБ</small></a>')
+        return (f'<a class="{cls}" href="{e(tr["download"])}" download>{POWER_SMALL}'
+                f'{t("Скачать", "Download")}<small>v{tr["version"]} · {tr["size_kb"]} {t("КБ", "KB")}</small></a>')
     return (f'<span class="{cls} is-off" aria-disabled="true">{POWER_SMALL}'
             f'{t("Скоро на GitHub", "Coming to GitHub")}<small>v{tr["version"]}</small></span>')
 
@@ -119,7 +119,7 @@ EMBLEM = ('<svg class="emblem" viewBox="0 0 48 48" aria-hidden="true">'
           '<path class="ring" pathLength="1" d="M17.4 18.3a9.6 9.6 0 1 0 13.2 0" /><path class="ring bar" pathLength="1" d="M24 13.6v10.6" /></svg>')
 
 # Donation services: (name, link). An empty link shows the button as "soon".
-DONATE = [("DonationAlerts", "https://www.donationalerts.com/r/offews"), ("Boosty", ""), ("ЮMoney", "")]
+DONATE = [("DonationAlerts", "https://www.donationalerts.com/r/offews")]
 
 
 def chips(tr):
