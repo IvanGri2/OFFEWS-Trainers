@@ -86,6 +86,29 @@ TRAINERS = [
         "highlights": [("Убийство с одного удара", "One-hit kills"), ("Без перезарядки", "No reload"),
                        ("Все улучшения оружия", "All weapon upgrades"), ("Заморозка врагов", "Freeze enemies")],
     },
+    {
+        "id": "silver-pines",
+        "slug": "silver-pines-trainer",
+        "funcs": "pines",
+        "title": "Silver Pines",
+        "poster": "assets/pines-poster.jpg",
+        "shots": [("assets/pines-main.jpg", "Вкладка «Основное»", "Main tab"),
+                  ("assets/pines-more.jpg", "Вкладка «Дополнительно»", "More tab")],
+        "version": "1.0.0",
+        "updated": "2026-10-10",
+        "game_build_ru": "версия 1.0 (618_173902)",
+        "game_build_en": "version 1.0 (618_173902)",
+        "mode_ru": "Одиночная игра",
+        "mode_en": "Single-player",
+        "about_ru": "Бессмертие, бесконечные выносливость и патроны, неломающееся оружие ближнего боя, вечный фонарик, убийство с одного удара, все двери без ключей, открытая карта, скорость игры и деньги.",
+        "about_en": "God mode, unlimited stamina and ammo, unbreakable melee weapons, a flashlight that never dies, one-hit kills, every door unlocked, the full map, game speed and money.",
+        "download": "downloads/SilverPinesTrainer-1.0.0.exe",
+        "dl_prefix": "SilverPinesTrainer-",
+        "size_kb": 217,
+        "glow": "#e0312f",
+        "highlights": [("Бессмертие", "God mode"), ("Все двери без ключей", "Master key"),
+                       ("Убийство с одного удара", "One-hit kills"), ("Вечный фонарик", "Endless flashlight")],
+    },
 ]
 
 PAGE_RU = {0: "Основное", 1: "Дополнительно"}
@@ -442,8 +465,8 @@ def build():
     front, back, mid = TRAINERS[0], TRAINERS[1], TRAINERS[2]
     ld = json.dumps({"@context": "https://schema.org", "@type": "WebSite", "name": "OFFEWS Trainers",
                      "alternateName": ["OFFEWS", "offews trainers"], "url": SITE_URL}, ensure_ascii=False)
-    head = head_tags("OFFEWS — трейнеры для Gears of War: E-Day, Hellraiser: Revival и End of Abyss",
-                     "Бесплатные трейнеры OFFEWS для одиночных игр: Gears of War: E-Day (+12), Clive Barker's Hellraiser: Revival (+53) и End of Abyss (+22). Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик.",
+    head = head_tags("OFFEWS — трейнеры для Gears of War: E-Day, Hellraiser: Revival, End of Abyss и Silver Pines",
+                     "Бесплатные трейнеры OFFEWS для одиночных игр: Gears of War: E-Day (+12), Clive Barker's Hellraiser: Revival (+53), End of Abyss (+22) и Silver Pines (+12). Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик.",
                      SITE_URL, "assets/gears-eday-main.jpg", f'<script type="application/ld+json">{ld}</script>')
     body = f"""{header("")}
 
