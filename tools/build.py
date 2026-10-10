@@ -119,6 +119,7 @@ EMBLEM = ('<svg class="emblem" viewBox="0 0 48 48" aria-hidden="true">'
           '<path class="ring" pathLength="1" d="M17.4 18.3a9.6 9.6 0 1 0 13.2 0" /><path class="ring bar" pathLength="1" d="M24 13.6v10.6" /></svg>')
 
 # Donation services: (name, link). An empty link shows the button as "soon".
+SITE_URL = "https://ivangri2.github.io/OFFEWS-Trainers/"
 DONATE = [("DonationAlerts", "https://www.donationalerts.com/r/offews")]
 
 
@@ -216,8 +217,16 @@ def build():
     cards = "".join(card(tr, i) for i, tr in enumerate(TRAINERS))
     details = "".join(detail(tr) for tr in TRAINERS)
     front, back = TRAINERS[0], TRAINERS[1]
-    head = f"""<title>OFFEWS Trainers</title>
-<meta name="description" content="Трейнеры OFFEWS для одиночных игр: бессмертие, бесконечные патроны, убийство с одного удара и десятки других функций в один клик.">
+    head = f"""<title>OFFEWS — трейнеры для Gears of War: E-Day и Hellraiser: Revival</title>
+<meta name="description" content="Бесплатные трейнеры OFFEWS для одиночных игр: Gears of War: E-Day (+11) и Clive Barker's Hellraiser: Revival (+53). Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик.">
+<link rel="canonical" href="{SITE_URL}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OFFEWS Trainers">
+<meta property="og:title" content="OFFEWS — трейнеры для одиночных игр">
+<meta property="og:description" content="Gears of War: E-Day и Hellraiser: Revival. Бессмертие, бесконечные патроны и десятки функций в один клик. Бесплатно.">
+<meta property="og:image" content="{SITE_URL}assets/gears-eday-main.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{{"@context":"https://schema.org","@type":"WebSite","name":"OFFEWS Trainers","alternateName":["OFFEWS","offews trainers"],"url":"{SITE_URL}"}}</script>
 <meta name="theme-color" content="#0b0b0d">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
