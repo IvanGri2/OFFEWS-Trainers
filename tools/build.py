@@ -439,7 +439,7 @@ def game_page(tr):
 def build():
     total = sum(count(tr) for tr in TRAINERS)
     cards = "".join(card(tr, i) for i, tr in enumerate(TRAINERS))
-    front, back = TRAINERS[0], TRAINERS[1]
+    front, back, mid = TRAINERS[0], TRAINERS[1], TRAINERS[2]
     ld = json.dumps({"@context": "https://schema.org", "@type": "WebSite", "name": "OFFEWS Trainers",
                      "alternateName": ["OFFEWS", "offews trainers"], "url": SITE_URL}, ensure_ascii=False)
     head = head_tags("OFFEWS — трейнеры для Gears of War: E-Day, Hellraiser: Revival и End of Abyss",
@@ -468,6 +468,7 @@ def build():
       <div class="stage" aria-hidden="true">
         <div class="stage-inner">
           <img class="win win-back" src="{back["shots"][0][0]}" alt="" width="1346" height="820">
+          <img class="win win-mid" src="{mid["shots"][0][0]}" alt="" width="1176" height="628">
           <img class="win win-front" src="{front["shots"][0][0]}" alt="" width="1174" height="628">
           <span class="stage-glow"></span>
         </div>

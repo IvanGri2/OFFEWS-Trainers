@@ -178,7 +178,7 @@ html[data-lang="en"] .hero h1 { font-size: min(104px, 13.8cqi); }
 .hero-stats dt { color: var(--dim); font-size: 13px; }
 .hero-stats dd { margin: 0; font: 700 30px/1 var(--font-display); font-variant-numeric: tabular-nums; }
 
-/* the 3D stage with two trainer windows */
+/* the 3D stage with three trainer windows: back left, middle right, front bottom */
 .stage { perspective: 1600px; min-width: 0; }
 .stage-inner {
   position: relative; aspect-ratio: 16 / 12; transform-style: preserve-3d;
@@ -189,17 +189,23 @@ html[data-lang="en"] .hero h1 { font-size: min(104px, 13.8cqi); }
 @keyframes stage-in { from { opacity: .2; transform: rotateY(-38deg) rotateX(14deg) translateZ(-200px); } }
 .win { position: absolute; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .12); }
 .win-back {
-  width: 82%; left: 0; top: 0; transform: translateZ(-140px); filter: brightness(.55) saturate(.9);
+  width: 74%; left: 0; top: 0; transform: translateZ(-160px); filter: brightness(.5) saturate(.9);
   box-shadow: 0 30px 80px rgba(0, 0, 0, .7), 0 0 60px -10px rgba(95, 140, 255, .45);
   animation: float-b 9s ease-in-out infinite;
 }
+.win-mid {
+  width: 72%; right: -4%; top: 13%; transform: translateZ(-50px); filter: brightness(.72) saturate(.95);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, .75), 0 0 70px -10px rgba(63, 182, 255, .5);
+  animation: float-m 8s ease-in-out infinite;
+}
 .win-front {
-  width: 86%; right: 0; bottom: 6%; transform: translateZ(60px);
+  width: 80%; left: 4%; bottom: 0; transform: translateZ(60px);
   box-shadow: 0 40px 100px -10px rgba(0, 0, 0, .85), 0 0 0 1px rgba(212, 42, 48, .35), 0 0 80px -6px rgba(212, 42, 48, .55);
   animation: float-f 7s ease-in-out infinite;
 }
 @keyframes float-f { 0%, 100% { transform: translateZ(60px) translateY(0); } 50% { transform: translateZ(60px) translateY(-14px); } }
-@keyframes float-b { 0%, 100% { transform: translateZ(-140px) translateY(0); } 50% { transform: translateZ(-140px) translateY(10px); } }
+@keyframes float-m { 0%, 100% { transform: translateZ(-50px) translateY(0); } 50% { transform: translateZ(-50px) translateY(-9px); } }
+@keyframes float-b { 0%, 100% { transform: translateZ(-160px) translateY(0); } 50% { transform: translateZ(-160px) translateY(10px); } }
 .stage-glow { position: absolute; left: 10%; right: 10%; bottom: -8%; height: 30%; background: radial-gradient(closest-side, rgba(212, 42, 48, .55), transparent); filter: blur(30px); transform: translateZ(-200px) rotateX(80deg); }
 
 /* function ticker */
