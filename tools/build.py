@@ -124,7 +124,7 @@ EMBLEM = ('<svg class="emblem" viewBox="0 0 48 48" aria-hidden="true">'
           '<path class="ring" pathLength="1" d="M17.4 18.3a9.6 9.6 0 1 0 13.2 0" /><path class="ring bar" pathLength="1" d="M24 13.6v10.6" /></svg>')
 
 # Donation services: (name, link). An empty link shows the button as "soon".
-SITE_URL = "https://ivangri2.github.io/OFFEWS-Trainers/"
+SITE_URL = "https://offews-trainers.pro/"
 REPO = "IvanGri2/OFFEWS-Trainers"
 
 # Comments. Cusdis (cusdis.com) takes a name and a comment, no account needed, and each comment
