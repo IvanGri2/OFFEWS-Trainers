@@ -169,8 +169,7 @@ def detail(tr):
         inner = []
         for g in gs:
             rows = "".join(
-                f'<li><button type="button" class="sw" aria-pressed="false" aria-label="{e(i["ru"])}"><span></span></button>'
-                f'<span class="fn">{t(i["ru"], i["en"])}</span>{keycap(i["key"])}</li>' for i in g["items"])
+                f'<li><span class="fn">{t(i["ru"], i["en"])}</span>{keycap(i["key"])}</li>' for i in g["items"])
             inner.append(f'<section class="group reveal"><h4>{t(g["ru"], g["en"])}</h4><ul>{rows}</ul></section>')
         head = f'<h3 class="page-tab">{t(PAGE_RU[page], PAGE_EN[page])}</h3>' if len(pages) > 1 else ""
         blocks.append(head + '<div class="groups">' + "".join(inner) + "</div>")
@@ -199,8 +198,11 @@ def detail(tr):
       </div>
       <div class="wrap trainer-body">
         <div class="shots shots-{len(tr["shots"])}">{shots}</div>
-        <p class="demo-hint">{t("Переключатели ниже можно понажимать: так функции включаются в трейнере. Горячие клавиши указаны по умолчанию и переназначаются.", "Try the switches below: this is how functions turn on in the trainer. Hotkeys are defaults and can be rebound.")}</p>
-        {"".join(blocks)}
+        <details class="funcs">
+          <summary>{t(f"Все {n} {word_ru} и горячие клавиши", f"All {n} functions and hotkeys")}</summary>
+          <p class="demo-hint">{t("Горячие клавиши указаны по умолчанию, в трейнере их можно переназначить.", "Hotkeys are defaults and can be rebound in the trainer.")}</p>
+          {"".join(blocks)}
+        </details>
       </div>
     </section>"""
 

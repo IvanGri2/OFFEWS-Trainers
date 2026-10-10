@@ -30,12 +30,6 @@
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
-  // ---- demo switches ------------------------------------------------------------------------
-  document.addEventListener("click", function (e) {
-    var sw = e.target.closest && e.target.closest(".sw");
-    if (sw) sw.setAttribute("aria-pressed", String(sw.getAttribute("aria-pressed") !== "true"));
-  });
-
   // ---- download counters: summed from GitHub release assets, cached for two minutes ----------
   var slots = document.querySelectorAll("[data-dl]");
   function pluralRu(n, one, few, many) {

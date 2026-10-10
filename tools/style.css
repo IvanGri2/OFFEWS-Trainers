@@ -245,26 +245,21 @@ html[data-lang="en"] .hero h1 { font-size: min(104px, 13.8cqi); }
 .shots figcaption { color: var(--dim); font-size: 13px; margin-top: 10px; }
 .demo-hint { color: var(--dim); font-size: 14px; max-width: 70ch; }
 .page-tab { font: 700 14px/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; padding-bottom: 10px; border-bottom: 2px solid var(--accent); justify-self: start; }
-.groups { columns: 2 340px; column-gap: 18px; }
-.group { break-inside: avoid; margin-bottom: 18px; background: var(--panel); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px 8px; transition: border-color .3s; }
+.groups { columns: 3 280px; column-gap: 14px; }
+.group { break-inside: avoid; margin-bottom: 18px; background: var(--panel); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px 4px; transition: border-color .3s; }
 .group:hover { border-color: var(--line-hi); }
 .group h4 { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font: 600 12px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--accent-hi); }
 .group h4::before { content: ""; width: 3px; height: 12px; background: var(--accent); border-radius: 1px; }
 .group h4::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .group ul { list-style: none; margin: 0; padding: 0; }
-.group li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid rgba(255, 255, 255, .05); }
+.group li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 5px 0; border-top: 1px solid rgba(255, 255, 255, .05); }
 .group li:first-child { border-top: 0; }
-.fn { font-size: 14.5px; color: var(--soft); transition: color .25s, text-shadow .25s; }
+.fn { font-size: 13.5px; color: var(--soft); transition: color .25s, text-shadow .25s; }
 .keys { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
 .keys i { font-style: normal; color: var(--off); font-size: 11px; }
 kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--panel-hi); border: 1px solid rgba(255, 255, 255, .1); border-bottom-width: 2px; border-radius: 5px; padding: 4px 6px; min-width: 22px; text-align: center; }
 
 /* switches like the trainer's */
-.sw { position: relative; width: 38px; height: 22px; border-radius: 999px; border: 0; padding: 0; cursor: pointer; background: #34343c; transition: background .25s, box-shadow .25s; }
-.sw span { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #e9e6e1; transition: transform .3s var(--ease); }
-.sw[aria-pressed="true"] { background: var(--accent); box-shadow: 0 0 16px rgba(255, 71, 71, .7); }
-.sw[aria-pressed="true"] span { transform: translateX(16px); }
-.sw[aria-pressed="true"] + .fn { color: #fff; text-shadow: 0 0 14px rgba(255, 71, 71, .6); }
 
 /* ---- how it works -------------------------------------------------------------------------- */
 .howto { padding-block: clamp(64px, 9vw, 120px); border-top: 1px solid var(--line); background: radial-gradient(70% 60% at 50% 0%, rgba(212, 42, 48, .1), transparent 70%); }
@@ -341,8 +336,6 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
 @media (max-width: 520px) {
   .top-row { gap: 12px; }
   .word small { display: none; }
-  .group li { grid-template-columns: auto minmax(0, 1fr); }
-  .group li .keys { grid-column: 2; }
   .hero-stats { gap: 22px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -357,3 +350,12 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
 .card-dl svg, .dl-count svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; color: var(--glow, #ff4747); }
 .card-dl b, .dl-count b { font: 700 15px/1 var(--font-display); color: var(--ink); font-variant-numeric: tabular-nums; }
 .card-dl { position: absolute; top: 18px; right: 18px; padding: 9px 12px; border-radius: 10px; background: rgba(10, 10, 12, .6); backdrop-filter: blur(8px); border: 1px solid var(--line-hi); font-size: 12px; }
+
+/* ---- full function list, collapsed under the screenshot ----------------------------------- */
+.funcs { display: grid; gap: 16px; }
+.funcs > summary { list-style: none; cursor: pointer; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 12px; border: 1px solid var(--line-hi); background: var(--panel); font-weight: 600; transition: border-color .25s, background .25s; }
+.funcs > summary::-webkit-details-marker { display: none; }
+.funcs > summary::after { content: "+"; font: 700 18px/1 var(--font-display); color: var(--glow, var(--accent)); transition: transform .3s var(--ease); }
+.funcs[open] > summary::after { transform: rotate(45deg); }
+.funcs > summary:hover { border-color: var(--glow, var(--accent)); }
+.funcs .groups { margin-top: 4px; }
