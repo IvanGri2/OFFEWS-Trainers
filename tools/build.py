@@ -63,6 +63,29 @@ TRAINERS = [
         "highlights": [("Режим призрака", "Ghost mode"), ("Убить всех врагов", "Kill all enemies"),
                        ("Открыть всю карту", "Reveal map"), ("Сохранение в любом месте", "Save anywhere")],
     },
+    {
+        "id": "end-of-abyss",
+        "slug": "end-of-abyss-trainer",
+        "funcs": "abyss",
+        "title": "End of Abyss",
+        "poster": "assets/abyss-poster.jpg",
+        "shots": [("assets/abyss-main.jpg", "Вкладка «Основное»", "Main tab"),
+                  ("assets/abyss-more.jpg", "Вкладка «Дополнительно»", "More tab")],
+        "version": "1.0.0",
+        "updated": "2026-10-10",
+        "game_build_ru": "сборка от 03.10.2026",
+        "game_build_en": "build of 2026-10-03",
+        "mode_ru": "Одиночная игра",
+        "mode_en": "Single-player",
+        "about_ru": "Режим бога, бесконечные патроны и аптечки, стрельба без перезарядки и перегрева, убийство с одного удара, заморозка врагов, деньги, все улучшения оружия, полёт и телепорт.",
+        "about_en": "God mode, unlimited ammo and heals, no reload or overheating, one-hit kills, frozen enemies, money, every weapon upgrade, flight and teleport.",
+        "download": "downloads/EndOfAbyssTrainer-1.0.0.exe",
+        "dl_prefix": "EndOfAbyssTrainer-",
+        "size_kb": 232,
+        "glow": "#3fb6ff",
+        "highlights": [("Убийство с одного удара", "One-hit kills"), ("Без перезарядки", "No reload"),
+                       ("Все улучшения оружия", "All weapon upgrades"), ("Заморозка врагов", "Freeze enemies")],
+    },
 ]
 
 PAGE_RU = {0: "Основное", 1: "Дополнительно"}
@@ -419,8 +442,8 @@ def build():
     front, back = TRAINERS[0], TRAINERS[1]
     ld = json.dumps({"@context": "https://schema.org", "@type": "WebSite", "name": "OFFEWS Trainers",
                      "alternateName": ["OFFEWS", "offews trainers"], "url": SITE_URL}, ensure_ascii=False)
-    head = head_tags("OFFEWS — трейнеры для Gears of War: E-Day и Hellraiser: Revival",
-                     "Бесплатные трейнеры OFFEWS для одиночных игр: Gears of War: E-Day (+11) и Clive Barker's Hellraiser: Revival (+53). Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик.",
+    head = head_tags("OFFEWS — трейнеры для Gears of War: E-Day, Hellraiser: Revival и End of Abyss",
+                     "Бесплатные трейнеры OFFEWS для одиночных игр: Gears of War: E-Day (+12), Clive Barker's Hellraiser: Revival (+53) и End of Abyss (+22). Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик.",
                      SITE_URL, "assets/gears-eday-main.jpg", f'<script type="application/ld+json">{ld}</script>')
     body = f"""{header("")}
 
