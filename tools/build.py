@@ -256,7 +256,7 @@ def card(tr, i):
       </article>"""
 
 
-def detail(tr, h="h2"):
+def detail(tr, lang, h="h2"):
     n = count(tr)
     groups = FUNCS[tr["funcs"]]
     pages = sorted({g["page"] for g in groups})
@@ -271,7 +271,7 @@ def detail(tr, h="h2"):
         head = f'<h3 class="page-tab">{t(PAGE_RU[page], PAGE_EN[page])}</h3>' if len(pages) > 1 else ""
         blocks.append(head + '<div class="groups">' + "".join(inner) + "</div>")
     shots = "".join(
-        f'<figure class="reveal"><img src="{s}" alt="{e(ru)}" loading="lazy"><figcaption>{t(ru, en)}</figcaption></figure>'
+        f'<figure class="reveal"><img src="{s}" alt="{e(en if lang == "en" else ru)}" loading="lazy"><figcaption>{t(ru, en)}</figcaption></figure>'
         for s, ru, en in tr["shots"])
     word_ru = plural_ru(n, "функция", "функции", "функций")
     return f"""
@@ -281,7 +281,7 @@ def detail(tr, h="h2"):
           <img class="banner-poster reveal" src="{tr["poster"]}" alt="" width="480" height="720" loading="lazy">
           <div class="banner-copy">
             <p class="eyebrow">{t(f"Трейнер · {n} {word_ru}", f"Trainer · {n} functions")}</p>
-            <{h} id="{tr["id"]}-title">{e(tr["title"])}</{h}>
+            <{h} id="{tr["id"]}-title"><small>{t("Трейнер и читы для", "Trainer & cheats for")}</small>{e(tr["title"])}</{h}>
             <p class="lead">{t(tr["about_ru"], tr["about_en"])}</p>
             <dl class="facts">
               <div><dt>{t("Проверено на версии", "Tested on")}</dt><dd>{t(tr["game_build_ru"], tr["game_build_en"])}</dd></div>
@@ -327,10 +327,19 @@ def ticker():
     return f'<div class="ticker" aria-hidden="true"><div class="ticker-track">{row}{row}</div></div>'
 
 
-def head_tags(title, desc, url, image, extra=""):
+def alternates(path):
+    """hreflang links for a page that exists at SITE_URL+path (Russian) and SITE_URL+"en/"+path."""
+    ru, en = SITE_URL + path, SITE_URL + "en/" + path
+    return (f'<link rel="alternate" hreflang="ru" href="{ru}">\n<link rel="alternate" hreflang="en" href="{en}">\n'
+            f'<link rel="alternate" hreflang="x-default" href="{ru}">')
+
+
+def head_tags(title, desc, path, lang, image, extra=""):
+    url = SITE_URL + ("en/" if lang == "en" else "") + path
     return f"""<title>{e(title)}</title>
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{url}">
+{alternates(path)}
 <meta name="google-site-verification" content="LGgZCnU1x5ZTDmNnzVbXTUddLsuJ42UH349fdWI2jtk">
 <meta name="yandex-verification" content="db4692bf265461a0">
 <meta property="og:type" content="website">
@@ -338,6 +347,8 @@ def head_tags(title, desc, url, image, extra=""):
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{url}">
+<meta property="og:locale" content="{"en_US" if lang == "en" else "ru_RU"}">
+<meta property="og:locale:alternate" content="{"ru_RU" if lang == "en" else "en_US"}">
 <meta property="og:image" content="{SITE_URL}{image}">
 <meta name="twitter:card" content="summary_large_image">
 {extra}
@@ -349,8 +360,12 @@ def head_tags(title, desc, url, image, extra=""):
 <style>{open(os.path.join(ROOT, "style.css"), encoding="utf-8").read()}</style>"""
 
 
-def header(home):
-    """home is the path back to the front page: "" there, "../" on a game page."""
+def header(home, path, lang):
+    """home is the path back to the front page: "" there, "../" on a game page. path is the page's
+    address below the language root, for the RU/EN switch."""
+    cur = ' aria-current="true"'
+    sw = "".join(f'<a href="{SITE_URL}{"en/" if l == "en" else ""}{path}" hreflang="{l}" data-set-lang="{l}"'
+                 f'{cur if l == lang else ""}>{l.upper()}</a>' for l in ("ru", "en"))
     return f"""<a class="skip" href="#main">{t("К содержимому", "Skip to content")}</a>
 <header class="top" id="top">
   <div class="wrap top-row">
@@ -362,8 +377,7 @@ def header(home):
       <a class="nav-donate" href="#support">{t("Поддержать", "Support")}</a>
     </nav>
     <div class="lang" role="group" aria-label="Language">
-      <button type="button" id="lang-ru" data-set-lang="ru" aria-pressed="true">RU</button>
-      <button type="button" id="lang-en" data-set-lang="en" aria-pressed="false">EN</button>
+      {sw}
     </div>
   </div>
 </header>"""
@@ -404,7 +418,20 @@ def support():
   </section>"""
 
 
+# (question RU, question EN, answer RU, answer EN). Shown on every page and given to search engines as FAQPage data.
+FAQ = [
+    ("Антивирус ругается на трейнер. Это вирус?", "My antivirus flags the trainer. Is it a virus?", "Нет. Трейнер меняет память игры, и некоторые антивирусы по эвристике считают это подозрительным. Обычно срабатывает один антивирус из семидесяти. Трейнер ничего не скачивает, не устанавливает и не отправляет в сеть.", "No. The trainer changes the game’s memory, and some antivirus heuristics find that suspicious. Usually one scanner out of seventy reacts. The trainer downloads, installs and sends nothing."),
+    ("Можно ли играть с трейнером по сети?", "Can I use a trainer online?", "Нет. Трейнеры сделаны только для одиночной игры. Если трейнер видит античит или сетевую игру, функции не включаются.", "No. The trainers are for single-player only. If a trainer detects an anti-cheat or an online session, functions stay off."),
+    ("Игра обновилась, и трейнер перестал работать", "The game updated and the trainer stopped working", "Сравни версию игры в окне трейнера с проверенной. Если они различаются, дождись обновления трейнера.", "Compare the game version in the trainer window with the tested one. If they differ, wait for a trainer update."),
+    ("Трейнер не запускается", "The trainer does not start", "Нужен .NET Framework 4.8. В Windows 10 и 11 он уже есть, в старых системах его можно поставить с сайта Microsoft.", "It needs .NET Framework 4.8. Windows 10 and 11 already have it; on older systems install it from Microsoft."),
+    ("Не испортит ли трейнер сохранения?", "Can the trainer break my saves?", "Функции меняют игру, только пока включены. Перед изменением денег, предметов и опыта на всякий случай сделай копию сохранений.", "Functions only change the game while they are on. Before changing money, items or experience, back up your saves just in case."),
+]
+
+
 def faq():
+    rows = "".join(
+        f'\n        <details class="reveal"{" open" if k == 0 else ""}><summary>{t(qr, qe)}</summary>\n          <p>{t(ar, ae)}</p></details>'
+        for k, (qr, qe, ar, ae) in enumerate(FAQ))
     return f"""
   <section class="faq" id="faq" aria-labelledby="faq-title">
     <div class="wrap faq-grid">
@@ -412,20 +439,16 @@ def faq():
         <p class="eyebrow">{t("Вопросы", "FAQ")}</p>
         <h2 id="faq-title">{t("Частые вопросы", "Common questions")}</h2>
       </div>
-      <div class="faq-list">
-        <details class="reveal" open><summary>{t("Антивирус ругается на трейнер. Это вирус?", "My antivirus flags the trainer. Is it a virus?")}</summary>
-          <p>{t("Нет. Трейнер меняет память игры, и некоторые антивирусы по эвристике считают это подозрительным. Обычно срабатывает один антивирус из семидесяти. Трейнер ничего не скачивает, не устанавливает и не отправляет в сеть.", "No. The trainer changes the game’s memory, and some antivirus heuristics find that suspicious. Usually one scanner out of seventy reacts. The trainer downloads, installs and sends nothing.")}</p></details>
-        <details class="reveal"><summary>{t("Можно ли играть с трейнером по сети?", "Can I use a trainer online?")}</summary>
-          <p>{t("Нет. Трейнеры сделаны только для одиночной игры. Если трейнер видит античит или сетевую игру, функции не включаются.", "No. The trainers are for single-player only. If a trainer detects an anti-cheat or an online session, functions stay off.")}</p></details>
-        <details class="reveal"><summary>{t("Игра обновилась, и трейнер перестал работать", "The game updated and the trainer stopped working")}</summary>
-          <p>{t("Сравни версию игры в окне трейнера с проверенной. Если они различаются, дождись обновления трейнера.", "Compare the game version in the trainer window with the tested one. If they differ, wait for a trainer update.")}</p></details>
-        <details class="reveal"><summary>{t("Трейнер не запускается", "The trainer does not start")}</summary>
-          <p>{t("Нужен .NET Framework 4.8. В Windows 10 и 11 он уже есть, в старых системах его можно поставить с сайта Microsoft.", "It needs .NET Framework 4.8. Windows 10 and 11 already have it; on older systems install it from Microsoft.")}</p></details>
-        <details class="reveal"><summary>{t("Не испортит ли трейнер сохранения?", "Can the trainer break my saves?")}</summary>
-          <p>{t("Функции меняют игру, только пока включены. Перед изменением денег, предметов и опыта на всякий случай сделай копию сохранений.", "Functions only change the game while they are on. Before changing money, items or experience, back up your saves just in case.")}</p></details>
+      <div class="faq-list">{rows}
       </div>
     </div>
   </section>"""
+
+
+def faq_ld(lang):
+    k = 1 if lang == "en" else 0
+    return {"@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q[k], "acceptedAnswer": {"@type": "Answer", "text": q[2 + k]}} for q in FAQ]}
 
 
 def footer(home):
@@ -440,13 +463,17 @@ def footer(home):
 <script>{open(os.path.join(ROOT, "site.js"), encoding="utf-8").read()}</script>"""
 
 
-def write_page(rel, head, body, depth=0):
-    """Writes OUT/rel. Pages one folder down get their local asset paths rewritten to ../assets/."""
-    doc = ('<!doctype html>\n<html lang="ru" data-lang="ru">\n<head>\n<meta charset="utf-8">\n'
+def write_page(rel, head, body, lang, depth=0):
+    """Writes OUT/rel in one language: text pairs of the other language are dropped, and pages
+    below the root get their local asset paths rewritten (../assets/, ../../assets/)."""
+    other = "en" if lang == "ru" else "ru"
+    head, body = (re.sub(rf'<(\w+) lang="{other}">.*?</\1>', "", x, flags=re.S) for x in (head, body))
+    doc = (f'<!doctype html>\n<html lang="{lang}" data-lang="{lang}">\n<head>\n<meta charset="utf-8">\n'
            '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
            + head + "\n</head>\n<body>\n" + body + "\n</body>\n</html>\n")
     if depth:
-        for a, b in (('src="assets/', 'src="../assets/'), ('href="assets/', 'href="../assets/'), ("url('assets/", "url('../assets/")):
+        up = "../" * depth
+        for a, b in (('src="assets/', f'src="{up}assets/'), ('href="assets/', f'href="{up}assets/'), ("url('assets/", f"url('{up}assets/")):
             doc = doc.replace(a, b)
     path = os.path.join(OUT, rel)
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -455,42 +482,80 @@ def write_page(rel, head, body, depth=0):
     return doc
 
 
-def game_page(tr):
+def ld_script(*items):
+    return f'<script type="application/ld+json">{json.dumps({"@context": "https://schema.org", "@graph": list(items)}, ensure_ascii=False)}</script>'
+
+
+def game_page(tr, lang):
     n = count(tr)
-    url = f"{SITE_URL}{tr['slug']}/"
-    title = f"Трейнер для {tr['title']} (+{n}) — OFFEWS"
-    desc = f"Бесплатный трейнер для {tr['title']}: {tr['about_ru'][0].lower()}{tr['about_ru'][1:]} Версия {tr['version']}, один exe-файл, включение в один клик."
-    ld = json.dumps({
-        "@context": "https://schema.org", "@type": "SoftwareApplication",
-        "name": f"{tr['title']} Trainer (OFFEWS)", "applicationCategory": "GameApplication", "operatingSystem": "Windows 10, Windows 11",
-        "softwareVersion": tr["version"], "url": url, "downloadUrl": release_url(tr["download"]),
+    en = lang == "en"
+    path = f"{tr['slug']}/"
+    root = SITE_URL + ("en/" if en else "")
+    url = root + path
+    name, about_ru, about_en = tr["title"], tr["about_ru"], tr["about_en"]
+    if en:
+        title = f"{name} Trainer (+{n} cheats) — free download | OFFEWS"
+        desc = f"Free {name} trainer with {n} cheats: {about_en[0].lower()}{about_en[1:]} Version {tr['version']}, a single exe, one-click hotkeys."
+    else:
+        title = f"Трейнер для {name} (+{n}) — читы, скачать бесплатно | OFFEWS"
+        desc = f"Бесплатный трейнер (читы) для {name}: {about_ru[0].lower()}{about_ru[1:]} Версия {tr['version']}, один exe-файл, включение в один клик."
+    app = {
+        "@type": "SoftwareApplication", "name": f"{name} Trainer (OFFEWS)", "description": about_en if en else about_ru,
+        "applicationCategory": "GameApplication", "operatingSystem": "Windows 10, Windows 11",
+        "softwareVersion": tr["version"], "dateModified": tr["updated"], "fileSize": f"{tr['size_kb']} KB",
+        "inLanguage": ["ru", "en"], "url": url, "image": SITE_URL + tr["shots"][0][0], "screenshot": [SITE_URL + s[0] for s in tr["shots"]],
+        "downloadUrl": release_url(tr["download"]),
         "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
         "author": {"@type": "Organization", "name": "OFFEWS", "url": SITE_URL},
-    }, ensure_ascii=False)
-    head = head_tags(title, desc, url, tr["shots"][0][0], f'<script type="application/ld+json">{ld}</script>')
-    body = f"""{header("../")}
+    }
+    crumbs = {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "OFFEWS Trainers", "item": root},
+        {"@type": "ListItem", "position": 2, "name": f"{name} Trainer" if en else f"Трейнер для {name}", "item": url}]}
+    head = head_tags(title, desc, path, lang, tr["shots"][0][0], ld_script(app, crumbs, faq_ld(lang)))
+    word_ru = plural_ru(n, "функция", "функции", "функций")
+    about = f"""
+    <section class="wrap about-text reveal" aria-labelledby="{tr["id"]}-about">
+      <h2 id="{tr["id"]}-about">{t(f"Читы для {name}", f"{name} cheats")}</h2>
+      <p>{t(f"Трейнер OFFEWS — это {n} {word_ru} читов для {name} в одной небольшой программе, без модов и правки файлов игры. {about_ru}",
+             f"The OFFEWS trainer packs {n} cheats for {name} into one small program, with no mods and no changes to game files. {about_en}")}</p>
+      <p>{t(f"Трейнер проверен на версии {tr['game_build_ru']}, режим: {tr['mode_ru'].lower()}. Скачай exe-файл, запусти его вместе с игрой и включай читы кликом в окне трейнера или горячими клавишами прямо в игре.",
+             f"Tested on {tr['game_build_en']}, mode: {tr['mode_en'].lower()}. Download the exe, run it alongside the game and switch cheats on with a click in the trainer window or with hotkeys in game.")}</p>
+    </section>"""
+    body = f"""{header("../", path, lang)}
 
 <main id="main" class="game-main">
-  <nav class="crumbs wrap" aria-label="Breadcrumbs"><a href="../#catalog">{t("Все трейнеры", "All trainers")}</a><span aria-hidden="true">/</span><span>{e(tr["title"])}</span></nav>
-{detail(tr, h="h1")}
+  <nav class="crumbs wrap" aria-label="Breadcrumbs"><a href="../#catalog">{t("Все трейнеры", "All trainers")}</a><span aria-hidden="true">/</span><span>{e(name)}</span></nav>
+{detail(tr, lang, h="h1")}
+{about}
 {howto()}
 {support()}
 {faq()}
 </main>
 {footer("../")}"""
-    write_page(f"{tr['slug']}/index.html", head, body, depth=1)
+    write_page(("en/" if en else "") + f"{tr['slug']}/index.html", head, body, lang, depth=2 if en else 1)
 
 
-def build():
+def home_page(lang):
+    en = lang == "en"
     total = sum(count(tr) for tr in TRAINERS)
     cards = "".join(card(tr, i) for i, tr in enumerate(TRAINERS))
     front, back, mid = TRAINERS[0], TRAINERS[1], TRAINERS[2]
-    ld = json.dumps({"@context": "https://schema.org", "@type": "WebSite", "name": "OFFEWS Trainers",
-                     "alternateName": ["OFFEWS", "offews trainers"], "url": SITE_URL}, ensure_ascii=False)
-    head = head_tags("OFFEWS — трейнеры для Gears of War: E-Day, Hellraiser: Revival, End of Abyss, Silver Pines и Atomfall",
-                     "Бесплатные трейнеры OFFEWS для одиночных игр: Gears of War: E-Day (+12), Clive Barker's Hellraiser: Revival (+53), End of Abyss (+22), Silver Pines (+12) и Atomfall (+11). Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик.",
-                     SITE_URL, "assets/gears-eday-main.jpg", f'<script type="application/ld+json">{ld}</script>')
-    body = f"""{header("")}
+    names = ", ".join(tr["title"] for tr in TRAINERS)
+    games = ", ".join(f"{tr['title']} (+{count(tr)})" for tr in TRAINERS)
+    if en:
+        title = "OFFEWS — free game trainers and cheats: " + ", ".join(tr["title"] for tr in TRAINERS)
+        desc = f"Free OFFEWS trainers for single-player games: {games}. God mode, unlimited ammo, one-hit kills and more, one click or hotkey away."
+    else:
+        title = "OFFEWS — трейнеры и читы для игр: " + ", ".join(tr["title"] for tr in TRAINERS)
+        desc = f"Бесплатные трейнеры (читы) OFFEWS для одиночных игр: {games}. Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик."
+    site = {"@type": "WebSite", "name": "OFFEWS Trainers", "alternateName": ["OFFEWS", "offews trainers"], "url": SITE_URL,
+            "inLanguage": ["ru", "en"], "description": desc}
+    org = {"@type": "Organization", "name": "OFFEWS", "url": SITE_URL, "logo": SITE_URL + "assets/favicon.svg"}
+    catalog = {"@type": "ItemList", "itemListElement": [
+        {"@type": "ListItem", "position": k + 1, "name": f"{tr['title']} Trainer", "url": f"{SITE_URL}{'en/' if en else ''}{tr['slug']}/"}
+        for k, tr in enumerate(TRAINERS)]}
+    head = head_tags(title, desc, "", lang, "assets/gears-eday-main.jpg", ld_script(site, org, catalog, faq_ld(lang)))
+    body = f"""{header("", "", lang)}
 
 <main id="main">
   <section class="hero" style="--art-a:url('{back["poster"]}'); --art-b:url('{front["poster"]}')">
@@ -499,7 +564,7 @@ def build():
       <div class="hero-copy">
         <div class="hero-mark" aria-hidden="true">{EMBLEM}</div>
         <h1>{t("Играй", "Play by")}<br><em>{t("по своим", "your own")}</em><br>{t("правилам", "rules")}</h1>
-        <p class="lead">{t("Трейнеры для одиночных игр: бессмертие, бесконечные патроны, убийство с одного удара и ещё десятки функций. Запускаешь, трейнер сам находит игру, всё включается в один клик.", "Trainers for single-player games: god mode, unlimited ammo, one-hit kills and dozens more. Start it, the trainer finds the game, every function is one click away.")}</p>
+        <p class="lead">{t(f"Бесплатные трейнеры и читы для одиночных игр: {names}. Бессмертие, бесконечные патроны, убийство с одного удара и ещё десятки функций. Запускаешь, трейнер сам находит игру, всё включается в один клик.", f"Free trainers and cheats for single-player games: {names}. God mode, unlimited ammo, one-hit kills and dozens more. Start it, the trainer finds the game, every function is one click away.")}</p>
         <div class="hero-cta">
           <a class="btn btn-primary btn-big" href="#catalog">{POWER_SMALL}{t("Выбрать игру", "Pick a game")}</a>
           <a class="btn btn-ghost btn-big" href="#howto">{t("Как это работает", "How it works")}</a>
@@ -526,7 +591,7 @@ def build():
     <div class="wrap">
       <div class="section-head reveal">
         <p class="eyebrow">{t("Каталог", "Catalog")}</p>
-        <h2 id="catalog-title">{t("Выбери игру", "Pick your game")}</h2>
+        <h2 id="catalog-title">{t("Трейнеры для игр", "Game trainers")}</h2>
       </div>
       <div class="cards">{cards}
       </div>
@@ -537,22 +602,35 @@ def build():
 {faq()}
 </main>
 {footer("")}"""
+    doc = write_page("en/index.html" if en else "index.html", head, body, lang, depth=1 if en else 0)
+    if not en:
+        with open(os.path.join(ROOT, "preview.html"), "w", encoding="utf-8") as f:
+            f.write(head + "\n" + body + "\n")
+    return total
 
-    write_page("index.html", head, body)
-    with open(os.path.join(ROOT, "preview.html"), "w", encoding="utf-8") as f:
-        f.write(head + "\n" + body + "\n")
-    for tr in TRAINERS:
-        game_page(tr)
-    urls = [SITE_URL] + [f"{SITE_URL}{tr['slug']}/" for tr in TRAINERS]
+
+def build():
+    for lang in ("ru", "en"):
+        total = home_page(lang)
+        for tr in TRAINERS:
+            game_page(tr, lang)
+    pages = [("", max(tr["updated"] for tr in TRAINERS))] + [(f"{tr['slug']}/", tr["updated"]) for tr in TRAINERS]
+    entries = []
+    for path, mod in pages:
+        alts = "".join(f'<xhtml:link rel="alternate" hreflang="{l}" href="{SITE_URL}{p}{path}"/>'
+                       for l, p in (("ru", ""), ("en", "en/"), ("x-default", "")))
+        for p in ("", "en/"):
+            entries.append(f"  <url><loc>{SITE_URL}{p}{path}</loc><lastmod>{mod}</lastmod>{alts}</url>\n")
     with open(os.path.join(OUT, "sitemap.xml"), "w", encoding="utf-8") as f:
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-                + "".join(f"  <url><loc>{u}</loc><lastmod>{max(tr['updated'] for tr in TRAINERS)}</lastmod></url>\n" for u in urls)
-                + "</urlset>\n")
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+                'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + "".join(entries) + "</urlset>\n")
+    with open(os.path.join(OUT, "robots.txt"), "w", encoding="utf-8") as f:
+        f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}sitemap.xml\n")
     with open(os.path.join(OUT, "assets", "favicon.svg"), "w", encoding="utf-8") as f:
         f.write('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><polygon points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5" '
                 'fill="#2a1416" stroke="#c8262c" stroke-width="4"/><g fill="none" stroke="#eae7e2" stroke-width="4" stroke-linecap="round">'
                 '<path d="M17.4 18.3a9.6 9.6 0 1 0 13.2 0"/><path d="M24 13.6v10.6"/></g></svg>')
-    print("built", total, "functions,", len(urls), "pages")
+    print("built", total, "functions,", len(entries), "pages")
 
 
 if __name__ == "__main__":
