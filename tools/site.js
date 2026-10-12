@@ -3,25 +3,18 @@
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ---- language -----------------------------------------------------------------------------
-  var buttons = document.querySelectorAll("[data-set-lang]");
-  function apply(lang) {
-    root.setAttribute("data-lang", lang);
-    root.setAttribute("lang", lang);
-    for (var i = 0; i < buttons.length; i++)
-      buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-set-lang") === lang));
-  }
+  // Each language has its own address (/ and /en/), so search engines index both. A reader who
+  // picked a language before is sent to that version; crawlers have no saved choice and stay put.
+  var page = root.getAttribute("data-lang");
   var saved = null;
   try { saved = localStorage.getItem("offews-lang"); } catch (e) {}
-  if (saved !== "ru" && saved !== "en")
-    saved = (navigator.language || "ru").toLowerCase().indexOf("ru") === 0 ? "ru" : "en";
-  apply(saved);
-  for (var i = 0; i < buttons.length; i++)
-    buttons[i].addEventListener("click", function () {
-      var lang = this.getAttribute("data-set-lang");
-      if (lang === root.getAttribute("data-lang")) return;
-      if (document.startViewTransition && !reduce) document.startViewTransition(function () { apply(lang); });
-      else apply(lang);
-      try { localStorage.setItem("offews-lang", lang); } catch (e) {}
+  var alt = document.querySelector('link[rel="alternate"][hreflang="' + saved + '"]');
+  if (saved && saved !== page && alt) { location.replace(alt.href + location.hash); return; }
+  var links = document.querySelectorAll("[data-set-lang]");
+  for (var i = 0; i < links.length; i++)
+    links[i].addEventListener("click", function () {
+      try { localStorage.setItem("offews-lang", this.getAttribute("data-set-lang")); } catch (e) {}
+      this.href += location.hash;
     });
 
   // ---- header turns solid after the hero starts scrolling away --------------------------------
