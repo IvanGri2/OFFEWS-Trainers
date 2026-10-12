@@ -109,6 +109,28 @@ TRAINERS = [
         "highlights": [("Бессмертие", "God mode"), ("Все двери без ключей", "Master key"),
                        ("Убийство с одного удара", "One-hit kills"), ("Вечный фонарик", "Endless flashlight")],
     },
+    {
+        "id": "atomfall",
+        "slug": "atomfall-trainer",
+        "funcs": "atomfall",
+        "title": "Atomfall",
+        "poster": "assets/atomfall-poster.jpg",
+        "shots": [("assets/atomfall-main.jpg", "Окно трейнера", "Trainer window")],
+        "version": "1.0.0",
+        "updated": "2026-10-12",
+        "game_build_ru": "сборка 2025.10.12.1730162",
+        "game_build_en": "build 2025.10.12.1730162",
+        "mode_ru": "Одиночная игра",
+        "mode_en": "Single-player",
+        "about_ru": "Бессмертие, бесконечные выносливость и патроны, убийство с одного удара, невидимость для врагов, предметы не тратятся, материалы для крафта, лёгкая торговля, очки навыков и скорость игры.",
+        "about_en": "God mode, unlimited stamina and ammo, one-hit kills, invisibility to enemies, items that are never used up, crafting materials, easy trades, skill points and game speed.",
+        "download": "downloads/AtomfallTrainer-1.0.0.exe",
+        "dl_prefix": "AtomfallTrainer-",
+        "size_kb": 393,
+        "glow": "#7bc043",
+        "highlights": [("Невидимость", "Invisibility"), ("Убийство с одного удара", "One-hit kills"),
+                       ("Лёгкая торговля", "Easy trades"), ("Предметы не тратятся", "Items never run out")],
+    },
 ]
 
 PAGE_RU = {0: "Основное", 1: "Дополнительно"}
@@ -465,8 +487,8 @@ def build():
     front, back, mid = TRAINERS[0], TRAINERS[1], TRAINERS[2]
     ld = json.dumps({"@context": "https://schema.org", "@type": "WebSite", "name": "OFFEWS Trainers",
                      "alternateName": ["OFFEWS", "offews trainers"], "url": SITE_URL}, ensure_ascii=False)
-    head = head_tags("OFFEWS — трейнеры для Gears of War: E-Day, Hellraiser: Revival, End of Abyss и Silver Pines",
-                     "Бесплатные трейнеры OFFEWS для одиночных игр: Gears of War: E-Day (+12), Clive Barker's Hellraiser: Revival (+53), End of Abyss (+22) и Silver Pines (+12). Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик.",
+    head = head_tags("OFFEWS — трейнеры для Gears of War: E-Day, Hellraiser: Revival, End of Abyss, Silver Pines и Atomfall",
+                     "Бесплатные трейнеры OFFEWS для одиночных игр: Gears of War: E-Day (+12), Clive Barker's Hellraiser: Revival (+53), End of Abyss (+22), Silver Pines (+12) и Atomfall (+11). Бессмертие, бесконечные патроны, убийство с одного удара и другие функции в один клик.",
                      SITE_URL, "assets/gears-eday-main.jpg", f'<script type="application/ld+json">{ld}</script>')
     body = f"""{header("")}
 
