@@ -131,6 +131,28 @@ TRAINERS = [
         "highlights": [("Невидимость", "Invisibility"), ("Убийство с одного удара", "One-hit kills"),
                        ("Лёгкая торговля", "Easy trades"), ("Предметы не тратятся", "Items never run out")],
     },
+    {
+        "id": "retrospace",
+        "slug": "retrospace-trainer",
+        "funcs": "retrospace",
+        "title": "Retrospace",
+        "poster": "assets/retrospace-poster.jpg",
+        "shots": [("assets/retrospace-main.jpg", "Окно трейнера", "Trainer window")],
+        "version": "1.0.0",
+        "updated": "2026-10-13",
+        "game_build_ru": "версия 1.0 от 01.10.2026",
+        "game_build_en": "version 1.0 of 2026-10-01",
+        "mode_ru": "Одиночная игра",
+        "mode_en": "Single-player",
+        "about_ru": "Бессмертие, бесконечные выносливость, кислород, энергия мутамодов и патроны, скорость передвижения, высота прыжка и скорость игры.",
+        "about_en": "God mode, unlimited stamina, oxygen, mutamod energy and ammo, movement speed, jump height and game speed.",
+        "download": "downloads/RetroSpaceTrainer-1.0.0.exe",
+        "dl_prefix": "RetroSpaceTrainer-",
+        "size_kb": 306,
+        "glow": "#e8a23a",
+        "highlights": [("Бессмертие", "God mode"), ("Бесконечный кислород", "Unlimited oxygen"),
+                       ("Бесконечные патроны", "Unlimited ammo"), ("Высота прыжка", "Jump height")],
+    },
 ]
 
 PAGE_RU = {0: "Основное", 1: "Дополнительно"}
