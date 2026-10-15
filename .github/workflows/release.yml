@@ -29,6 +29,10 @@ jobs:
               continue
             fi
             md5=$(md5sum "$f" | cut -d' ' -f1)
+            case "$name" in
+              *Voice-Setup*) what="Установщик русской AI озвучки OFFEWS. Описание: https://offews-trainers.pro/ai-voiceover/" ;;
+              *) what="Трейнер OFFEWS для одиночной игры. Скачать и описание: https://offews-trainers.pro/" ;;
+            esac
             gh release create "$tag" "$f" --target "$GITHUB_SHA" --title "$tag" \
-              --notes "Трейнер OFFEWS для одиночной игры. Скачать и описание: https://offews-trainers.pro/  MD5: $md5"
+              --notes "$what  MD5: $md5"
           done

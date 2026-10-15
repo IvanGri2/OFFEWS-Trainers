@@ -178,6 +178,37 @@ TRAINERS = [
     },
 ]
 
+# AI voice-overs: Russian dubbing mods with a setup installer. "download" works like a trainer's: the
+# file in downloads/ becomes a GitHub release. "samples" are short mp3 lines in assets/voice/.
+VOICE_SECTION = "ai-voiceover/"
+MODS_DIR = "Content\\Paks\\~mods"
+VOICEOVERS = [
+    {
+        "id": "end-of-abyss-voice",
+        "slug": "end-of-abyss-russian-voiceover",
+        "title": "End of Abyss",
+        "poster": "assets/abyss-poster.jpg",
+        "version": "1.0.0",
+        "updated": "2026-10-15",
+        "game_build_ru": "версия октября 2026",
+        "game_build_en": "October 2026 version",
+        "lines": 177,
+        "about_ru": "Русская озвучка всех реплик игры: солдаты, капитан, переговоры по рации, катсцены, Fractured и ИИ. Голоса сделаны нейросетью по образцу оригинальных и обработаны как в игре: голос из шлема скафандра, помехи рации. Переговоры экипажа, которые в оригинале звучат неразборчивым бормотанием, тоже озвучены по-русски.",
+        "about_en": "Russian dubbing of every voiced line in the game: soldiers, the captain, radio calls, cutscenes, Fractured and the AI. The voices are AI-generated after the original ones and processed like in the game: a voice inside a suit helmet, radio static. Crew chatter that is unintelligible babble in the original is voiced in Russian too.",
+        "download": "downloads/EndOfAbyssRuVoice-Setup-1.0.0.exe",
+        "dl_prefix": "EndOfAbyssRuVoice-",
+        "size_mb": 6.8,
+        "shot": ("assets/abyss-voice-setup.png", "Окно установщика", "Installer window"),
+        "glow": "#3fb6ff",
+        "highlights": [("Все реплики игры", "Every voiced line"), ("Эффект шлема и рации", "Helmet and radio effects"),
+                       ("Озвучены переговоры экипажа", "Crew chatter voiced"), ("Удаление в один клик", "One-click uninstall")],
+        # (file in assets/voice/, speaker RU, speaker EN, line)
+        "samples": [("eoa-ru-soldier-e19.mp3", "Солдат E-19", "Soldier E-19", "Эта дверь защищена активным энергозамком."),
+                    ("eoa-ru-captain.mp3", "Капитан", "Captain", "Техник, найди способ открыть дверь."),
+                    ("eoa-ru-radio.mp3", "Рация", "Radio", "Кажется, один из энергоканалов не работает.")],
+    },
+]
+
 PAGE_RU = {0: "Основное", 1: "Дополнительно"}
 PAGE_EN = {0: "Main", 1: "More"}
 
@@ -417,6 +448,7 @@ def header(home, path, lang):
     <a class="brand" href="{home or "#"}" aria-label="OFFEWS">{EMBLEM}<span class="word"><b>OFF</b>EWS<small>TRAINERS</small></span></a>
     <nav class="nav" aria-label="Sections">
       <a href="{home}#catalog">{t("Игры", "Games")}</a>
+      <a class="nav-voice" href="{home}{VOICE_SECTION}">{t("AI озвучка", "AI voice-over")}</a>
       <a href="#howto">{t("Как это работает", "How it works")}</a>
       <a href="#faq">{t("Вопросы", "FAQ")}</a>
       <a class="nav-donate" href="#support">{t("Поддержать", "Support")}</a>
@@ -642,6 +674,7 @@ def home_page(lang):
       </div>
     </div>
   </section>
+{voice_teaser()}
 {howto()}
 {support()}
 {faq()}
@@ -654,12 +687,239 @@ def home_page(lang):
     return total
 
 
+
+# ---------- AI voice-over section ----------
+
+VOICE_FAQ = [
+    ("Что нужно для установки?", "What do I need to install it?",
+     "Лицензионная игра на ПК и Windows 10 или 11. Установщик сам находит папку игры в Steam, если не нашёл, её можно выбрать вручную. Перед установкой закрой игру.",
+     "The PC game and Windows 10 or 11. The installer finds the game folder in Steam by itself; if it does not, pick the folder by hand. Close the game before installing."),
+    ("Меняет ли озвучка файлы игры?", "Does the voice-over change game files?",
+     "Нет. Установщик только добавляет файлы мода в папку Content\\Paks\\~mods, оригинальные файлы игры остаются как есть. Удаление убирает эти файлы, и игра звучит как раньше.",
+     "No. The installer only adds the mod files to Content\\Paks\\~mods and leaves the original game files as they are. Uninstalling removes those files and the game sounds as before."),
+    ("Как удалить озвучку?", "How do I remove it?",
+     "Запусти установщик ещё раз и нажми «Удалить». Можно и вручную: удали файлы zzz_OffewsRU_* из папки Content\\Paks\\~mods.",
+     "Run the installer again and press Uninstall. Or by hand: delete the zzz_OffewsRU_* files from Content\\Paks\\~mods."),
+    ("Игра обновилась, и озвучка пропала или сломалась", "The game updated and the voice-over is gone or broken",
+     "Озвучка сделана под определённую сборку игры, она указана на странице. После крупного патча удали озвучку и дождись обновления.",
+     "The voice-over is made for a specific game build, shown on this page. After a big patch uninstall it and wait for an update."),
+    ("Кто озвучивал?", "Who voiced it?",
+     "Нейросеть. Это неофициальная фанатская озвучка, голоса сгенерированы ИИ и обработаны под звук оригинала. Субтитры остаются из игры.",
+     "A neural network. This is an unofficial fan dub: the voices are AI-generated and processed to match the original sound. Subtitles stay as in the game."),
+]
+
+
+def voice_faq():
+    rows = "".join(
+        f'\n        <details class="reveal"{" open" if k == 0 else ""}><summary>{t(qr, qe)}</summary>\n          <p>{t(ar, ae)}</p></details>'
+        for k, (qr, qe, ar, ae) in enumerate(VOICE_FAQ))
+    return f"""
+  <section class="faq" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq-grid">
+      <div class="section-head reveal">
+        <p class="eyebrow">{t("Вопросы", "FAQ")}</p>
+        <h2 id="faq-title">{t("Частые вопросы об озвучке", "Voice-over questions")}</h2>
+      </div>
+      <div class="faq-list">{rows}
+      </div>
+    </div>
+  </section>"""
+
+
+def voice_faq_ld(lang):
+    k = 1 if lang == "en" else 0
+    return {"@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q[k], "acceptedAnswer": {"@type": "Answer", "text": q[2 + k]}} for q in VOICE_FAQ]}
+
+
+def voice_howto():
+    return f"""
+  <section class="howto" id="howto" aria-labelledby="howto-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">{t("Как установить", "How to install")}</p>
+        <h2 id="howto-title">{t("Три шага до русской речи", "Three steps to Russian speech")}</h2>
+      </div>
+      <ol class="steps">
+        <li class="reveal"><b>{t("Скачай установщик", "Download the installer")}</b><p>{t("Один exe-файл, внутри уже всё нужное.", "One exe with everything inside.")}</p></li>
+        <li class="reveal"><b>{t("Закрой игру и запусти его", "Close the game, run it")}</b><p>{t("Установщик сам найдёт папку игры, проверь путь.", "It finds the game folder; check the path.")}</p></li>
+        <li class="reveal"><b>{t("Нажми «Установить»", "Press Install")}</b><p>{t("Запускай игру. Удалить можно тем же установщиком.", "Start the game. The same installer uninstalls.")}</p></li>
+      </ol>
+    </div>
+  </section>"""
+
+
+def voice_download(v, big=False):
+    cls = "btn btn-primary" + (" btn-big" if big else "")
+    if v["download"] and v["size_mb"]:
+        return (f'<a class="{cls}" href="{e(release_url(v["download"]))}">{POWER_SMALL}'
+                f'{t("Скачать установщик", "Download installer")}<small>v{v["version"]} · {v["size_mb"]} {t("МБ", "MB")}</small></a>')
+    return (f'<span class="{cls} is-off" aria-disabled="true">{POWER_SMALL}'
+            f'{t("Скоро", "Coming soon")}<small>v{v["version"]}</small></span>')
+
+
+def voice_samples(v):
+    if not v["samples"]:
+        return ""
+    rows = "".join(
+        f'<li class="sample reveal"><span class="sample-who">{t(sr, se)}</span><span class="sample-line">{e(line)}</span>'
+        f'<audio controls preload="none" src="assets/voice/{e(f)}"></audio></li>'
+        for f, sr, se, line in v["samples"])
+    return f"""
+        <section class="samples" aria-labelledby="{v["id"]}-samples">
+          <h3 id="{v["id"]}-samples">{t("Послушай, как звучит", "Hear how it sounds")}</h3>
+          <ul class="sample-list">{rows}</ul>
+        </section>"""
+
+
+def voice_card(v):
+    return f"""
+      <article class="card reveal" style="--glow:{v["glow"]}" data-tilt>
+        <a class="card-link" href="{v["slug"]}/" aria-label="{e(v["title"])}">
+          <img class="card-art" src="{v["poster"]}" alt="" width="480" height="720" loading="lazy">
+          <span class="card-glare" aria-hidden="true"></span>
+          <span class="card-count"><b>{v["lines"]}</b>{t(plural_ru(v["lines"], "реплика", "реплики", "реплик"), "lines")}</span>
+          {dl_count(v, "card-dl")}
+          <span class="card-info">
+            <span class="card-ver mono">{t("Русская AI озвучка", "Russian AI dub")} · v{v["version"]}</span>
+            <span class="card-title">{e(v["title"])}</span>
+            <ul class="chips">{chips(v)}</ul>
+          </span>
+        </a>
+      </article>"""
+
+
+def voice_game_page(v, lang):
+    en = lang == "en"
+    path = f"{v['slug']}/"
+    root = SITE_URL + ("en/" if en else "")
+    url = root + path
+    name = v["title"]
+    if en:
+        title = f"{name} Russian voice-over (AI dub) — free download | OFFEWS"
+        desc = f"Free Russian AI voice-over for {name}: {v['lines']} lines with helmet and radio effects, one-click installer and uninstaller. Version {v['version']}."
+    else:
+        title = f"Русская озвучка {name} (AI) — скачать бесплатно | OFFEWS"
+        desc = f"Бесплатная русская AI озвучка {name}: {v['lines']} реплик с эффектом шлема и рации, установка и удаление в один клик. Версия {v['version']}."
+    app = {
+        "@type": "SoftwareApplication", "name": f"{name} Russian voice-over (OFFEWS)", "description": v["about_en"] if en else v["about_ru"],
+        "applicationCategory": "GameApplication", "operatingSystem": "Windows 10, Windows 11",
+        "softwareVersion": v["version"], "dateModified": v["updated"], "inLanguage": "ru", "url": url, "image": SITE_URL + v["poster"],
+        "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+        "author": {"@type": "Organization", "name": "OFFEWS", "url": SITE_URL},
+    }
+    if v["size_mb"]:
+        app["downloadUrl"] = release_url(v["download"])
+        app["fileSize"] = f"{v['size_mb']} MB"
+    crumbs = {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "OFFEWS", "item": root},
+        {"@type": "ListItem", "position": 2, "name": "AI voice-over" if en else "AI озвучка", "item": root + VOICE_SECTION},
+        {"@type": "ListItem", "position": 3, "name": name, "item": url}]}
+    head = head_tags(title, desc, path, lang, v["poster"], ld_script(app, crumbs, voice_faq_ld(lang)))
+    body = f"""{header("../", path, lang)}
+
+<main id="main" class="game-main">
+  <nav class="crumbs wrap" aria-label="Breadcrumbs"><a href="../{VOICE_SECTION}">{t("AI озвучка", "AI voice-over")}</a><span aria-hidden="true">/</span><span>{e(name)}</span></nav>
+    <section class="trainer" id="{v["id"]}" style="--glow:{v["glow"]}" aria-labelledby="{v["id"]}-title">
+      <div class="trainer-banner" style="--art:url('{v["poster"]}')">
+        <div class="wrap banner-grid">
+          <img class="banner-poster reveal" src="{v["poster"]}" alt="" width="480" height="720" loading="lazy">
+          <div class="banner-copy">
+            <p class="eyebrow">{t(f"AI озвучка · {v['lines']} {plural_ru(v['lines'], 'реплика', 'реплики', 'реплик')}", f"AI voice-over · {v['lines']} lines")}</p>
+            <h1 id="{v["id"]}-title"><small>{t("Русская озвучка для", "Russian voice-over for")}</small>{e(name)}</h1>
+            <p class="lead">{t(v["about_ru"], v["about_en"])}</p>
+            <dl class="facts">
+              <div><dt>{t("Сделано для версии", "Made for")}</dt><dd>{t(v["game_build_ru"], v["game_build_en"])}</dd></div>
+              <div><dt>{t("Озвучка", "Voice-over")}</dt><dd class="mono">v{v["version"]}</dd></div>
+              <div><dt>{t("Обновлена", "Updated")}</dt><dd>{t(date_ru(v["updated"]), date_en(v["updated"]))}</dd></div>
+              <div><dt>{t("Язык", "Language")}</dt><dd>{t("Русский, субтитры из игры", "Russian, game subtitles")}</dd></div>
+            </dl>
+            <div class="trainer-actions">{voice_download(v, big=True)}{dl_count(v, "dl-count")}<span class="req">Windows 10/11 · .NET Framework 4.8</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="wrap trainer-body">
+        {voice_samples(v)}
+        <div class="voice-setup">
+        <figure class="shots reveal"><img src="{v["shot"][0]}" alt="{e(v["shot"][2] if lang == "en" else v["shot"][1])}" width="626" height="429" loading="lazy"><figcaption>{t(v["shot"][1], v["shot"][2])}</figcaption></figure>
+        <section class="about-text reveal">
+          <h2>{t("Что внутри", "What is inside")}</h2>
+          <p>{t(f"Установщик добавляет мод в папку {MODS_DIR} и не трогает оригинальные файлы игры. Тем же установщиком озвучку можно удалить, и игра снова заговорит по-английски.", f"The installer adds the mod to {MODS_DIR} and does not touch the original game files. The same installer removes it, and the game speaks English again.")}</p>
+          <p>{t("Неофициальная фанатская озвучка: голоса сгенерированы нейросетью. Нужна лицензионная игра.", "Unofficial fan dub: the voices are AI-generated. You need the game itself.")}</p>
+        </section>
+        </div>
+      </div>
+    </section>
+{voice_howto()}
+{support()}
+{voice_faq()}
+</main>
+{footer("../")}"""
+    write_page(("en/" if en else "") + f"{v['slug']}/index.html", head, body, lang, depth=2 if en else 1)
+
+
+def voice_section_page(lang):
+    en = lang == "en"
+    path = VOICE_SECTION
+    names = ", ".join(v["title"] for v in VOICEOVERS)
+    if en:
+        title = f"AI voice-overs for games: Russian dubbing of {names} | OFFEWS"
+        desc = f"Free Russian AI voice-overs for games: {names}. Voices made after the originals, with game-like effects and a one-click installer."
+    else:
+        title = f"AI озвучка игр: русская озвучка {names} | OFFEWS"
+        desc = f"Бесплатная русская AI озвучка игр: {names}. Голоса по образцу оригинальных, эффекты как в игре, установка в один клик."
+    lst = {"@type": "ItemList", "itemListElement": [
+        {"@type": "ListItem", "position": k + 1, "name": f"{v['title']} Russian voice-over", "url": f"{SITE_URL}{'en/' if en else ''}{v['slug']}/"}
+        for k, v in enumerate(VOICEOVERS)]}
+    head = head_tags(title, desc, path, lang, VOICEOVERS[0]["poster"], ld_script(lst, voice_faq_ld(lang)))
+    cards = "".join(voice_card(v) for v in VOICEOVERS)
+    body = f"""{header("../", path, lang)}
+
+<main id="main" class="game-main">
+  <section class="catalog voice-intro" aria-labelledby="voice-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">{t("AI озвучка игр", "AI voice-over for games")}</p>
+        <h1 id="voice-title">{t("Игры заговорят по-русски", "Games that speak Russian")}</h1>
+        <p class="lead">{t("Русская озвучка для игр, у которых её нет. Нейросеть повторяет характер оригинальных голосов, а звук обработан как в самой игре: шлем, рация, помехи. Ставится и удаляется установщиком, оригинальные файлы игры не меняются.", "Russian dubbing for games that have none. A neural network keeps the character of the original voices, and the sound is processed like in the game itself: helmets, radio, static. An installer adds and removes it; the original game files stay unchanged.")}</p>
+      </div>
+      <div class="cards">{cards}
+      </div>
+    </div>
+  </section>
+{voice_howto()}
+{support()}
+{voice_faq()}
+</main>
+{footer("../")}"""
+    write_page(("en/" if en else "") + f"{path}index.html", head, body, lang, depth=2 if en else 1)
+
+
+def voice_teaser():
+    v = VOICEOVERS[0]
+    return f"""
+  <section class="voice-teaser" aria-labelledby="voice-teaser-title">
+    <div class="wrap">
+      <a class="voice-teaser-panel reveal" href="{VOICE_SECTION}" style="--glow:{v["glow"]}">
+        <span class="eyebrow">{t("Новый раздел", "New section")}</span>
+        <h2 id="voice-teaser-title">{t("AI озвучка игр", "AI voice-over for games")}</h2>
+        <p class="lead">{t(f"Русская озвучка {v['title']}: все реплики, голоса по образцу оригинальных, установка в один клик.", f"Russian dub for {v['title']}: every line, voices after the originals, one-click install.")}</p>
+        <span class="btn btn-ghost">{t("Перейти к озвучке", "Open the section")}</span>
+      </a>
+    </div>
+  </section>"""
+
+
 def build():
     for lang in ("ru", "en"):
         total = home_page(lang)
         for tr in TRAINERS:
             game_page(tr, lang)
-    pages = [("", max(tr["updated"] for tr in TRAINERS))] + [(f"{tr['slug']}/", tr["updated"]) for tr in TRAINERS]
+        voice_section_page(lang)
+        for v in VOICEOVERS:
+            voice_game_page(v, lang)
+    pages = [("", max(tr["updated"] for tr in TRAINERS + VOICEOVERS))] + [(f"{tr['slug']}/", tr["updated"]) for tr in TRAINERS]
+    pages += [(VOICE_SECTION, max(v["updated"] for v in VOICEOVERS))] + [(f"{v['slug']}/", v["updated"]) for v in VOICEOVERS]
     entries = []
     for path, mod in pages:
         alts = "".join(f'<xhtml:link rel="alternate" hreflang="{l}" href="{SITE_URL}{p}{path}"/>'
