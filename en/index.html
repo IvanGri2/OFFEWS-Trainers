@@ -411,6 +411,27 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
 .crumbs a { color: var(--soft); text-decoration: none; }
 .crumbs a:hover { color: var(--ink); }
 .game-main .trainer-banner { border-top: 0; padding-top: clamp(24px, 4vw, 48px); }
+
+/* AI voice-over section */
+.voice-intro .section-head h1 { font: 900 clamp(34px, 5.4vw, 72px)/1.02 var(--font-display); letter-spacing: -.03em; text-transform: uppercase; }
+.voice-teaser { padding-bottom: clamp(40px, 6vw, 80px); }
+.voice-teaser-panel { display: grid; gap: 16px; justify-items: start; text-decoration: none; padding: clamp(24px, 4vw, 48px); border-radius: 20px; border: 1px solid var(--line-hi); background: radial-gradient(80% 120% at 100% 0%, color-mix(in srgb, var(--glow) 28%, transparent), transparent 60%), var(--panel); transition: border-color .3s, transform .4s var(--ease); }
+.voice-teaser-panel:hover { border-color: color-mix(in srgb, var(--glow) 60%, transparent); transform: translateY(-4px); }
+.voice-teaser-panel h2 { font: 900 clamp(28px, 4vw, 48px)/1.05 var(--font-display); letter-spacing: -.02em; text-transform: uppercase; }
+.voice-intro .cards { grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 400px)); }
+.samples { display: grid; gap: 14px; }
+.samples h3 { font: 700 clamp(20px, 2.4vw, 26px)/1.2 var(--font-display); }
+.sample-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px; }
+.sample { display: grid; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; }
+.sample-who { font: 600 12px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--glow, var(--accent)) 65%, #fff); }
+.sample-line { color: var(--soft); }
+.sample audio { width: 100%; color-scheme: dark; }
+.nav a { white-space: nowrap; }
+@media (max-width: 760px) { .nav a.nav-voice { display: inline; } }
+@media (max-width: 520px) { .top-row .nav { gap: 10px; font-size: 14px; } .top-row .brand .word { display: none; } .lang a { padding: 7px 9px; } }
+.voice-setup { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: clamp(20px, 4vw, 48px); align-items: center; }
+.voice-setup figure { margin: 0; }
+@media (max-width: 760px) { .voice-setup { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -420,6 +441,7 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
     <a class="brand" href="#" aria-label="OFFEWS"><svg class="emblem" viewBox="0 0 48 48" aria-hidden="true"><polygon class="hex" pathLength="1" points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5" /><path class="ring" pathLength="1" d="M17.4 18.3a9.6 9.6 0 1 0 13.2 0" /><path class="ring bar" pathLength="1" d="M24 13.6v10.6" /></svg><span class="word"><b>OFF</b>EWS<small>TRAINERS</small></span></a>
     <nav class="nav" aria-label="Sections">
       <a href="#catalog"><span lang="en">Games</span></a>
+      <a class="nav-voice" href="ai-voiceover/"><span lang="en">AI voice-over</span></a>
       <a href="#howto"><span lang="en">How it works</span></a>
       <a href="#faq"><span lang="en">FAQ</span></a>
       <a class="nav-donate" href="#support"><span lang="en">Support</span></a>
@@ -559,6 +581,17 @@ kbd { font: 600 11.5px/1 var(--font-mono); color: var(--ink); background: var(--
         </a>
       </article>
       </div>
+    </div>
+  </section>
+
+  <section class="voice-teaser" aria-labelledby="voice-teaser-title">
+    <div class="wrap">
+      <a class="voice-teaser-panel reveal" href="ai-voiceover/" style="--glow:#3fb6ff">
+        <span class="eyebrow"><span lang="en">New section</span></span>
+        <h2 id="voice-teaser-title"><span lang="en">AI voice-over for games</span></h2>
+        <p class="lead"><span lang="en">Russian dub for End of Abyss: every line, voices after the originals, one-click install.</span></p>
+        <span class="btn btn-ghost"><span lang="en">Open the section</span></span>
+      </a>
     </div>
   </section>
 
