@@ -692,7 +692,7 @@ def home_page(lang):
 
 VOICE_FAQ = [
     ("Что нужно для установки?", "What do I need to install it?",
-     "Лицензионная игра на ПК и Windows 10 или 11. Установщик сам находит папку игры в Steam, если не нашёл, её можно выбрать вручную. Перед установкой закрой игру.",
+     "Игра на ПК и Windows 10 или 11. Установщик сам находит папку игры в Steam, если не нашёл, её можно выбрать вручную. Перед установкой закрой игру.",
      "The PC game and Windows 10 or 11. The installer finds the game folder in Steam by itself; if it does not, pick the folder by hand. Close the game before installing."),
     ("Меняет ли озвучка файлы игры?", "Does the voice-over change game files?",
      "Нет. Установщик только добавляет файлы мода в папку Content\\Paks\\~mods, оригинальные файлы игры остаются как есть. Удаление убирает эти файлы, и игра звучит как раньше.",
@@ -845,7 +845,7 @@ def voice_game_page(v, lang):
         <section class="about-text reveal">
           <h2>{t("Что внутри", "What is inside")}</h2>
           <p>{t(f"Установщик добавляет мод в папку {MODS_DIR} и не трогает оригинальные файлы игры. Тем же установщиком озвучку можно удалить, и игра снова заговорит по-английски.", f"The installer adds the mod to {MODS_DIR} and does not touch the original game files. The same installer removes it, and the game speaks English again.")}</p>
-          <p>{t("Неофициальная фанатская озвучка: голоса сгенерированы нейросетью. Нужна лицензионная игра.", "Unofficial fan dub: the voices are AI-generated. You need the game itself.")}</p>
+          <p>{t("Неофициальная фанатская озвучка: голоса сгенерированы нейросетью.", "Unofficial fan dub: the voices are AI-generated.")}</p>
         </section>
         </div>
       </div>
