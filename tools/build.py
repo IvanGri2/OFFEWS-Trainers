@@ -775,7 +775,7 @@ def voice_samples(v):
 def voice_card(v):
     return f"""
       <article class="card reveal" style="--glow:{v["glow"]}" data-tilt>
-        <a class="card-link" href="{v["slug"]}/" aria-label="{e(v["title"])}">
+        <a class="card-link" href="../{v["slug"]}/" aria-label="{e(v["title"])}">
           <img class="card-art" src="{v["poster"]}" alt="" width="480" height="720" loading="lazy">
           <span class="card-glare" aria-hidden="true"></span>
           <span class="card-count"><b>{v["lines"]}</b>{t(plural_ru(v["lines"], "реплика", "реплики", "реплик"), "lines")}</span>
